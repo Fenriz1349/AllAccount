@@ -15,11 +15,14 @@ import SwiftData
 class Account: Identifiable {
     @Attribute(.unique) var name: String
     var isActive: Bool
+    @Relationship var user : User
     @Relationship var transactions: [Transaction] = []
 
-    init(name: String, isActive: Bool = true) {
+    init(name: String, isActive: Bool = true, user: User, transactions: [Transaction] = []) {
         self.name = name
         self.isActive = isActive
+        self.user = user
+        self.transactions = transactions
     }
 
     func deactivate() {
@@ -62,4 +65,25 @@ class Transaction: Identifiable {
     }
 }
 
+@Model
+class User : Identifiable {
+    @Attribute(.unique) var id = UUID()
+    var name : String
+    var birthDate  : Date
+    var mail : String
+    var password : String
+    @Relationship var accounts : [Account]
+    
+    init(name: String, birthDate: Date, mail: String = "", password: String = "", accounts: [Account] = []) {
+        self.name = name
+        self.birthDate = birthDate
+        self.mail = mail
+        self.password = password
+        self.accounts = accounts
+    }
+    
+    func totalAccountAmount() -> Double {
+        return accounts.reduce(0) { $0 + $1.totalTransactionsAmount() }
+    }
+}
 

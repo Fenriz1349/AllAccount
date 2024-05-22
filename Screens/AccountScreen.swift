@@ -39,6 +39,7 @@ struct AccountScreen: View {
                                            Text(account.name)
                                                .font(.headline)
                                                .foregroundStyle(account.isActive ? .green : .red)
+                                           Text(account.user.name)
                                            Text("Total: \(account.totalTransactionsAmount(), specifier: "%.2f")")
                                                .foregroundColor(.blue)
                                        }

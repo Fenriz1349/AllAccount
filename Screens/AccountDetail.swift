@@ -114,7 +114,7 @@ struct AccountDetail: View {
 }
 
 #Preview {
-    AccountDetail(account: Account(name: "Compte de test", isActive: true))
+    AccountDetail(account: Account(name: "Compte de test", isActive: true, user: User(name: "testeur", birthDate: Date())))
         .modelContainer(for: Account.self, inMemory: true)
 }
 

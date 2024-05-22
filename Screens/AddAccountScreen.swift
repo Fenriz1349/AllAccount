@@ -14,6 +14,7 @@ struct AddAccountScreen: View {
     @State private var name: String = ""
     @State private var showAlert = false
     @Query var accounts: [Account]
+    @Query var users : [User]
 
     var body: some View {
         NavigationView {
@@ -47,14 +48,18 @@ struct AddAccountScreen: View {
     }
 
     private func addAccount() {
-        let newAccount = Account(name: name)
-        modelContext.insert(newAccount)
+        if let guestUser = users.first(where: { $0.name.lowercased() == "invité" }) {
+            let newAccount = Account(name: name, user: guestUser)
+            modelContext.insert(newAccount)
+        }
+        
     }
 }
 
 #Preview {
     AddAccountScreen()
         .modelContainer(for: Account.self, inMemory: true)
+        .modelContainer(for: User.self, inMemory: true)
 }
 
 
