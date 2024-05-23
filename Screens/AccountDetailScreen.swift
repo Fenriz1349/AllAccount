@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct AccountDetail: View {
+struct AccountDetailScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     var account: Account
@@ -28,10 +28,11 @@ struct AccountDetail: View {
         }
     }
 
-        init(account: Account) {
-            self.account = account
-            _accountCopy = State(initialValue: AccountCopy(name: account.name, isActive: account.isActive, transactions: nil))
-        }
+    init(account: Account) {
+        self.account = account
+        _accountCopy = State(initialValue: AccountCopy(name: account.name, isActive: account.isActive, transactions: account.transactions))
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -114,8 +115,9 @@ struct AccountDetail: View {
 }
 
 #Preview {
-    AccountDetail(account: Account(name: "Compte de test", isActive: true, user: User(name: "testeur", birthDate: Date())))
-        .modelContainer(for: Account.self, inMemory: true)
+    let modelContainer = DataController.previewContainer
+    let firstAccount = try! modelContainer.mainContext.fetch(FetchDescriptor<Account>()).first!
+    return AccountDetailScreen(account: firstAccount)
 }
 
 

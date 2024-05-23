@@ -13,8 +13,6 @@ struct AllAccountApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [User.self, Account.self,Transaction.self], inMemory: false)
         }
     }
 }
-

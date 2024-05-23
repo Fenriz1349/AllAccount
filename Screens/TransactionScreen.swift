@@ -10,81 +10,69 @@ import SwiftData
 
 struct TransactionScreen: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var transactions: [Transaction]
-    @Query private var accounts: [Account]
+    @Query (sort: \Transaction.amount, order: .forward)private var transactions: [Transaction]
+    @Query (sort: \Account.name, order: .forward) private var accounts: [Account]
     @State private var selectedAccount: Account?
-    @State private var index: Int = 1
+    @State private var showAddTransactionModal = false
     @State private var showAddAccountModal = false
-
+    
     var body: some View {
         NavigationView {
             VStack {
-                Picker("Select Account", selection: $selectedAccount) {
-                    ForEach(accounts) { account in
-                        Text(account.name).tag(account as Account?)
+                if accounts.isEmpty {
+                    VStack {
+                        Text("Vous n'avez pas encore de Compte")
+                            .font(.title)
+                            .padding()
+                        ExtButtonAdd(text : "Créer",showModale: $showAddAccountModal)
+                        .sheet(isPresented: $showAddAccountModal, content: {
+                            AddAccountScreen()
+                        })
                     }
-                }
-                .pickerStyle(MenuPickerStyle())
-                .padding()
-
-                List {
-                    ForEach(transactions) { transaction in
-                        VStack(alignment: .leading) {
-                            Text(transaction.name)
-                                .font(.headline)
-                            Text("Amount: \(transaction.amount, specifier: "%.2f")")
-                                .foregroundColor(transaction.isActive ? .green : .red)
-                            Text("Account: \(transaction.accountName)")
-                        }
-                        .contextMenu {
-                            Button(action: {
-                                toggleTransactionStatus(transaction)
-                            }) {
-                                Text(transaction.isActive ? "Deactivate" : "Activate")
-                                Image(systemName: transaction.isActive ? "xmark.circle" : "checkmark.circle")
+                }else if transactions.isEmpty {
+                    VStack {
+                        Text("Vous n'avez pas encore de transaction")
+                            .font(.title)
+                            .padding()
+                        ExtButtonAdd(text : "Ajouter",showModale: $showAddTransactionModal)
+                            .sheet(isPresented: $showAddTransactionModal, content: {
+                                AddTransactionScreen()
+                            })
+                    }
+                } else if !transactions.filter({!$0.isActive}).isEmpty && transactions.filter({$0.isActive}).isEmpty{
+                    VStack {
+                        Text("Vous n'avez pas encore de transaction active")
+                            .font(.title)
+                            .padding()
+                        ExtButtonAdd(text : "Ajouter",showModale: $showAddTransactionModal)
+                            .sheet(isPresented: $showAddTransactionModal, content: {
+                                AddTransactionScreen()
+                            })
+                    }
+                }else {
+                    List {
+                        ForEach(transactions.filter { $0.isActive }) { transaction in
+                            NavigationLink {
+                                TransactionDetailScreen()
+                            }label : {
+                                VStack(alignment: .leading) {
+                                    Text(transaction.name)
+                                        .font(.headline)
+                                        .foregroundStyle(transaction.isActive ? .green : .red)
+                                    Text(transaction.account.name)
+                                    Text("montant: \(transaction.amount, specifier: "%.2f")")
+                                        .foregroundColor(.blue)
+                                }
                             }
                         }
                     }
-                    .onDelete(perform: deleteTransactions)
-                }
-                .navigationTitle("Transactions")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        EditButton()
-                    }
-                    ToolbarItem {
-                        Button(action: addTransaction) {
-                            Label("Add Transaction", systemImage: "plus")
-                        }
-                    }
+                    ExtButtonAdd(text : "Ajouter",showModale: $showAddTransactionModal)
+                        .sheet(isPresented: $showAddTransactionModal, content: {
+                            AddTransactionScreen()
+                        })
                 }
             }
-        }
-    }
-
-    private func addTransaction() {
-        guard let selectedAccount = selectedAccount else {
-            print("No account selected")
-            return
-        }
-        withAnimation {
-            let newTransaction = Transaction(name: "Transaction \(index)", amount: Double.random(in: 1...100), account: selectedAccount)
-            modelContext.insert(newTransaction)
-            index += 1
-        }
-    }
-
-    private func toggleTransactionStatus(_ transaction: Transaction) {
-        withAnimation {
-            transaction.isActive.toggle()
-        }
-    }
-
-    private func deleteTransactions(at offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(transactions[index])
-            }
+            .navigationTitle("Transactions")
         }
     }
 }

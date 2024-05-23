@@ -10,50 +10,42 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var isInitialized = false
-
+    @State private var selectedTab = 2
+    @StateObject private var dataController = DataController()
+    
     var body: some View {
-        TabView {
+        TabView (selection: $selectedTab){
             TransactionScreen()
                 .tabItem {
-                    Label("Transactions", systemImage: "square.and.pencil")
+                    Label("Transactions", systemImage: "eurosign")
                 }
+                .tag(0)
             AccountScreen()
                 .tabItem {
-                    Label("Comptes", systemImage: "list.dash")
+                    Label("Comptes", systemImage: "building.columns.fill")
                 }
+                .tag(1)
             ProfilScreen()
                 .tabItem {
                     Label("Profil", systemImage: "person")
                 }
+                .tag(2)
         }
+        .environment(\.modelContext, dataController.container.mainContext)
+        .modelContainer(for: [User.self, Account.self, Transaction.self], inMemory: false)
         .onAppear {
-            if !isInitialized {
-                initializeGuestUser()
-                isInitialized = true
+            print("test")
+            if !dataController.isInitialized {
+                dataController.initializeSampleData()
             }
         }
-    }
 
-    private func initializeGuestUser() {
-        do {
-            let users: [User] = try modelContext.fetch(FetchDescriptor<User>())
-            if users.isEmpty {
-                let guestUser = User(name: "Invité", birthDate: Date(), mail: "", password: "")
-                modelContext.insert(guestUser)
-                try modelContext.save()
-                print("Invité ajouté")
-            }
-        } catch {
-            print("Failed to fetch or save guest user: \(error)")
-        }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Account.self, inMemory: true)
-        .modelContainer(for: Transaction.self, inMemory: true)
+        .modelContainer(for: [User.self, Account.self, Transaction.self], inMemory: false)
 }
 
 

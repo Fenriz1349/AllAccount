@@ -10,7 +10,7 @@ import SwiftData
 
 struct AccountScreen: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var accounts: [Account]
+    @Query(sort: \Account.name, order: .forward) private var accounts: [Account]
     @State private var currentAccount : Account?
     @State private var showAddAccountModal : Bool = false
 
@@ -33,7 +33,7 @@ struct AccountScreen: View {
                            List {
                                ForEach(accounts.filter { $0.isActive }) { account in
                                    NavigationLink {
-                                       AccountDetail(account:account)
+                                       AccountDetailScreen(account:account)
                                    }label : {
                                        VStack(alignment: .leading) {
                                            Text(account.name)
@@ -48,23 +48,12 @@ struct AccountScreen: View {
                                .onDelete(perform: desactivateAccounts)
                            }
                        }
-                       Button(action: { showAddAccountModal.toggle() }) {
-                           Label("Ajouter", systemImage: "plus")
-                               .padding()
-                               .background(Color.blue)
-                               .foregroundColor(.white)
-                               .cornerRadius(8)
-                       }
+                       ExtButtonAdd(text : "Créer",showModale: $showAddAccountModal)
                        .sheet(isPresented: $showAddAccountModal, content: {
                                                    AddAccountScreen()
                                                })
                    }
                    .navigationTitle("Comptes")
-                   .toolbar {
-                       ToolbarItem(placement: .navigationBarTrailing) {
-                           EditButton()
-                       }
-                   }
                }
            }
 
@@ -80,5 +69,7 @@ struct AccountScreen: View {
 #Preview {
     AccountScreen()
         .modelContainer(for: Account.self, inMemory: true)
+        .modelContainer(for: Transaction.self, inMemory: true)
+    
 }
 
