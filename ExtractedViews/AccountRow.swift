@@ -15,12 +15,19 @@ struct AccountRow: View {
             AccountDetailScreen(account:account)
         }label : {
             VStack(alignment: .leading) {
-                Text(account.name)
-                    .font(.headline)
-                    .foregroundStyle(account.isActive ? .green : .red)
+                HStack{
+                    Text(account.name)
+                        .font(.headline)
+                        .foregroundStyle(.blue )
+                    Text (account.accountType.rawValue)
+                        .foregroundStyle(account.accountType.getColor())
+                }
+                
                 Text(account.user.name)
-                Text("Total: \(account.totalTransactionsAmount(), specifier: "%.2f")")
-                    .foregroundColor(.blue)
+                HStack {
+                    Text("Total:")
+                    ExtEuroAmmount(amount:account.totalTransactionsAmount())
+                }
             }
         }
     }

@@ -20,7 +20,11 @@ struct ProfilScreen: View {
         NavigationView {
             VStack(alignment: .center) {
                 Text("Bonjour \(currentUser.name)")
-                Text("Votre solde Total est de \(currentUser.totalAccountAmount(), specifier: "%.2f")")
+                HStack{
+                    Text("Votre solde Total est de ")
+                    ExtEuroAmmount(amount: currentUser.totalAccountAmount())
+                }
+               
                 Button(action: {
                     dataController.resetDatabase()
                     dataController.initializeSampleData()

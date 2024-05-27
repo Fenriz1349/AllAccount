@@ -11,7 +11,15 @@ import SwiftData
 struct AddAccountScreen: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var dataController: DataController
+
+    private var currentUser: User {
+        dataController.currentUser
+    }
+
+    
     @State private var name: String = ""
+    @State private var accountType : AccountType = .bank
     @State private var showAlert = false
     @Query var accounts: [Account]
     @Query var users : [User]
@@ -21,6 +29,11 @@ struct AddAccountScreen: View {
             Form {
                 Section(header: Text("Détails du compte")) {
                     TextField("Nom", text: $name)
+                    Picker ("Type :",selection: $accountType) {
+                        ForEach (AccountType.allCases, id: \.self) {accountType in
+                            Text(accountType.rawValue).tag(accountType as AccountType?)
+                        }
+                    }.pickerStyle(.segmented)
                 }
             }
             .navigationTitle("Nouveau Compte")
@@ -48,11 +61,8 @@ struct AddAccountScreen: View {
     }
 
     private func addAccount() {
-        if let guestUser = users.first(where: { $0.name.lowercased() == "invité" }) {
-            let newAccount = Account(name: name, user: guestUser)
+            let newAccount = Account(name: name, user: currentUser, accountType: accountType)
             modelContext.insert(newAccount)
-        }
-        
     }
 }
 

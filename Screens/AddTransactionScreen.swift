@@ -25,8 +25,8 @@ struct AddTransactionScreen: View {
                 Section(header: Text("Détails de la transaction")) {
                     TextField("Nom", text: $name)
                     TextField("Montant", text: $amount)
-                    Picker("Select Account", selection: $selectedAccount) {
-                        ForEach(accounts) { account in
+                    Picker("Selectionner le Compte", selection: $selectedAccount) {
+                        ForEach(accounts.filter {$0.isActive}) { account in
                             Text(account.name).tag(account as Account?)
                         }
                     }

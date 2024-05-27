@@ -39,19 +39,9 @@ struct TransactionScreen: View {
                                 AddTransactionScreen()
                             })
                     }
-                } else if !transactions.filter({!$0.isActive}).isEmpty && transactions.filter({$0.isActive}).isEmpty{
-                    VStack {
-                        Text("Vous n'avez pas encore de transaction active")
-                            .font(.title)
-                            .padding()
-                        ExtButtonAdd(text : "Ajouter",showModale: $showAddTransactionModal)
-                            .sheet(isPresented: $showAddTransactionModal, content: {
-                                AddTransactionScreen()
-                            })
-                    }
                 }else {
                     List {
-                        ForEach(transactions.filter { $0.isActive }) { transaction in
+                        ForEach(transactions) { transaction in
                             TransactionRow(transaction: transaction)
                         }
                     }

@@ -12,107 +12,100 @@ struct AccountDetailScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     var account: Account
-    @State private var accountCopy: AccountCopy
-    @State private var showRenameAlert = false
-    @State private var newName: String = ""
 
-    struct AccountCopy {
-        var name: String
-        var isActive: Bool
-        var transactions : [Transaction]?
-        func totalTransactionsAmount() -> Double {
-            guard let transactions = transactions else {
-                return 0.0
-            }
-            return transactions.filter { $0.isActive }.reduce(0.0) { $0 + $1.amount }
-        }
-    }
+    @State private var newName: String
+    @State private var newIsActive: Bool
+    @State private var showValidateAlert = false
+    @State private var isEditing = false
 
     init(account: Account) {
         self.account = account
-        _accountCopy = State(initialValue: AccountCopy(name: account.name, isActive: account.isActive, transactions: account.transactions))
+        _newName = State(initialValue: account.name)
+        _newIsActive = State(initialValue: account.isActive)
     }
-    
+
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(accountCopy.name)
-                    .font(.headline)
-                    .foregroundStyle(accountCopy.isActive ? .green : .red)
-                Text("Statut : \(accountCopy.isActive ? "actif" : "inactif")")
-            }
-            .padding(.bottom)
-            
-            Text("Total: \(accountCopy.totalTransactionsAmount(), specifier: "%.2f")")
-                .foregroundColor(.blue)
-            List(accountCopy.transactions ?? []) {transaction in
-                TransactionRow(transaction: transaction)
-            }
-            HStack{
-                Button(action: {
-                    accountCopy.isActive.toggle()
-                }) {
-                    Text(account.isActive ? "Désactiver" : "Activer")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(account.isActive ? Color.red : Color.green)
-                        .cornerRadius(8)
+            if isEditing {
+                TextField("Nouveau nom", text: $newName)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                Toggle("Statut", isOn: $newIsActive)
+                    .padding()
+            } else {
+                HStack {
+                    Text(account.name)
+                        .font(.headline)
+                        .foregroundStyle(account.isActive ? .green : .red)
+                    Text("Statut : \(account.isActive ? "actif" : "inactif")")
                 }
-                .padding(.bottom)
+            }
+            
+            Text("Total: \(account.totalTransactionsAmount(), specifier: "%.2f")")
+                .foregroundColor(.blue)
+            ForEach(account.transactions) { transaction in
+                TransactionAccountRow(transaction: transaction)
+            }
+            HStack {
+                if !isEditing {
+                    Button(action: {
+                        newIsActive = account.isActive
+                        isEditing.toggle()
+                    }) {
+                        Text(account.isActive ? "Désactiver" : "Activer")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(account.isActive ? Color.red : Color.green)
+                            .cornerRadius(8)
+                    }
+                    .padding(.bottom)
+                }
                 
                 Button(action: {
-                    newName = accountCopy.name
-                    showRenameAlert = true
+                    if isEditing {
+                        showValidateAlert.toggle()
+                    } else {
+                        newName = account.name
+                        newIsActive = account.isActive
+                        isEditing.toggle()
+                    }
                 }) {
-                    Text("Modifier le nom")
+                    Text(isEditing ? "Valider" : "Modifier")
                         .foregroundColor(.white)
                         .padding()
                         .background(Color.blue)
                         .cornerRadius(8)
                 }
-            }
-            HStack {
-                Button(action: {
-                    account.name = accountCopy.name
-                    account.isActive = accountCopy.isActive
-                    do {
-                        try modelContext.save()
-                        dismiss()
-                    } catch {
-                        print("Erreur lors de la sauvegarde : \(error)")
+                .padding(.bottom)
+
+                if isEditing {
+                    Button(action: {
+                        isEditing.toggle()
+                    }) {
+                        Text("Annuler")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(8)
                     }
-                }) {
-                    Text("Valider")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.green)
-                        .cornerRadius(8)
+                    .padding(.bottom)
                 }
-                .padding(.bottom)
-                
-                Button(action: {
-                    dismiss()
-                }) {
-                    Text("Annuler")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.red)
-                        .cornerRadius(8)
-                }
-                .padding(.bottom)
             }
         }
         .padding()
-        .alert("Modifier le nom", isPresented: $showRenameAlert, actions: {
-            TextField("Nouveau nom", text: $newName)
+        .alert("Valider les modifications", isPresented: $showValidateAlert, actions: {
             Button("Annuler", role: .cancel) {}
-            Button("Enregistrer") {
-                if !newName.isEmpty {
-                    accountCopy.name = newName
+            Button("Valider", role: .none) {
+                account.name = newName
+                account.isActive = newIsActive
+                do {
+                    try modelContext.save()
+                    dismiss()
+                } catch {
+                    print("Erreur lors de la sauvegarde : \(error)")
                 }
             }
         }, message: {
-            Text("Veuillez saisir un nouveau nom pour le compte.")
+            Text("Êtes-vous sûr de vouloir valider les modifications ?")
         })
     }
 }
@@ -121,6 +114,6 @@ struct AccountDetailScreen: View {
     let modelContainer = DataController.previewContainer
     let firstAccount = try! modelContainer.mainContext.fetch(FetchDescriptor<Account>()).first!
     return AccountDetailScreen(account: firstAccount)
+        .environment(\.modelContext, modelContainer.mainContext)
+        .environmentObject(DataController())
 }
-
-

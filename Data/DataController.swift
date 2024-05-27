@@ -66,20 +66,20 @@ class DataController: ObservableObject {
                 let sampleUser = User(name: "Sample User", birthDate: Date(), mail: "user@example.com", password: "password")
                 context.insert(sampleUser)
 
-                let sampleAccount1 = Account(name: "Sample Account 1", user: sampleUser)
+                let sampleAccount1 = Account(name: "Sample Account 1", user: sampleUser,accountType: .bank)
                 context.insert(sampleAccount1)
 
-                let sampleAccount2 = Account(name: "Sample Account 2", user: sampleUser)
+                let sampleAccount2 = Account(name: "Sample Account 2", user: sampleUser,accountType: .cash)
                 context.insert(sampleAccount2)
 
                 let sampleTransactions1 = [
-                    Transaction(name: "Sample Test 1", amount: 10.0, account: sampleAccount1, date: Date()),
+                    Transaction(name: "Sample Test 1", amount: -10.0, account: sampleAccount1, date: Date()),
                     Transaction(name: "Sample Test 2", amount: 20.0, account: sampleAccount1, date: Date()),
                     Transaction(name: "Sample Test 3", amount: 30.0, account: sampleAccount1, date: Date())
                 ]
 
                 let sampleTransactions2 = [
-                    Transaction(name: "Sample Test 4", amount: 40.0, account: sampleAccount2, date: Date()),
+                    Transaction(name: "Sample Test 4", amount: -40.0, account: sampleAccount2, date: Date()),
                     Transaction(name: "Sample Test 5", amount: 50.0, account: sampleAccount2, date: Date())
                 ]
 
@@ -114,20 +114,20 @@ class DataController: ObservableObject {
             let previewUser = User(name: "Preview User 1", birthDate: Date(), mail: "user@example.com", password: "password")
             container.mainContext.insert(previewUser)
 
-            let previewAccount1 = Account(name: "Preview Account 1", user: previewUser)
+            let previewAccount1 = Account(name: "Preview Account 1", user: previewUser,accountType: .bank)
             container.mainContext.insert(previewAccount1)
 
-            let previewAccount2 = Account(name: "Preview Account 2", user: previewUser)
+            let previewAccount2 = Account(name: "Preview Account 2", user: previewUser,accountType: .cash)
             container.mainContext.insert(previewAccount2)
 
             let previewTransactions1 = [
-                Transaction(name: "Preview Test 1", amount: 10.0, account: previewAccount1, date: Date()),
+                Transaction(name: "Preview Test 1", amount: -10.0, account: previewAccount1, date: Date()),
                 Transaction(name: "Preview Test 2", amount: 20.0, account: previewAccount1, date: Date()),
                 Transaction(name: "Preview Test 3", amount: 30.0, account: previewAccount1, date: Date())
             ]
 
             let previewTransactions2 = [
-                Transaction(name: "Preview Test 4", amount: 40.0, account: previewAccount2, date: Date()),
+                Transaction(name: "Preview Test 4", amount: -40.0, account: previewAccount2, date: Date()),
                 Transaction(name: "Preview Test 5", amount: 50.0, account: previewAccount2, date: Date())
             ]
 
@@ -167,6 +167,7 @@ class DataController: ObservableObject {
             }
 
             try context.save()
+            isInitialized = false
             print("Database reset successfully.")
         } catch {
             print("Failed to reset database: \(error)")

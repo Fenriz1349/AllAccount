@@ -16,6 +16,7 @@ struct AllAccountApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.modelContext, dataController.container.mainContext)
+                .environmentObject(dataController)
                 .onAppear {
                     dataController.resetDatabase()
                     if !dataController.isInitialized {

@@ -24,3 +24,10 @@ func stringToDouble (_ test : String) -> Double? {
         }
     }
 }
+
+//fonction pour retourner la date au format JJ/MM
+func DateToStringDayMonth(_ date : Date) -> String {
+       let dateFormatter = DateFormatter()
+       dateFormatter.dateFormat = "dd/MM"
+       return dateFormatter.string(from: date)
+   }
