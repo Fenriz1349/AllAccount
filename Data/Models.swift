@@ -15,18 +15,20 @@ class User : Identifiable {
     var birthDate  : Date
     var mail : String
     var password : String
-    @Relationship var accounts : [Account]
+    @Relationship var accounts : [Account] = []
     
-    init(name: String, birthDate: Date, mail: String = "", password: String = "", accounts: [Account] = []) {
+    init(name: String, birthDate: Date, mail: String = "", password: String = "") {
         self.name = name
         self.birthDate = birthDate
         self.mail = mail
         self.password = password
-        self.accounts = accounts
     }
-    
+    func addAccount(_ account: Account) {
+        accounts.append(account)
+        account.user = self
+    }
     func totalAccountAmount() -> Double {
-        return accounts.reduce(0) { $0 + $1.totalTransactionsAmount() }
+        return accounts.reduce(0.0) { $0 + $1.totalTransactionsAmount() }
     }
 }
 
@@ -39,13 +41,17 @@ class Account: Identifiable {
     @Relationship var user : User
     @Relationship var transactions: [Transaction] = []
 
-    init(name: String, isActive: Bool = true, user: User, transactions: [Transaction] = []) {
+    init(name: String, isActive: Bool = true, user: User) {
         self.name = name
         self.isActive = isActive
         self.user = user
-        self.transactions = transactions
+        user.addAccount(self)
     }
-
+    func addTransaction(_ transaction: Transaction) {
+        transactions.append(transaction)
+        transaction.account = self
+    }
+    
     func deactivate() {
         self.isActive = false
     }
@@ -55,7 +61,7 @@ class Account: Identifiable {
     }
 
     func totalTransactionsAmount() -> Double {
-        return transactions.filter { $0.isActive }.reduce(0) { $0 + $1.amount }
+        return transactions.filter { $0.isActive }.reduce(0.0) { $0 + $1.amount }
     }
 }
 
@@ -73,8 +79,9 @@ class Transaction: Identifiable {
         self.name = name
         self.amount = amount
         self.isActive = isActive
-        self.account = account
         self.date = date
+        self.account = account
+        account.addTransaction(self)
     }
 
     func deactivate() {
@@ -85,6 +92,3 @@ class Transaction: Identifiable {
         self.isActive = true
     }
 }
-
-
-

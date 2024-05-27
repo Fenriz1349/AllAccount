@@ -34,4 +34,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(\.modelContext, DataController.previewContainer.mainContext)
+        .environmentObject(DataController())
 }

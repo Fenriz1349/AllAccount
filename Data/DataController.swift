@@ -5,10 +5,6 @@
 //  Created by Fen on 23/05/2024.
 //
 
-import Foundation
-import SwiftData
-
-
 import SwiftUI
 import SwiftData
 
@@ -17,8 +13,9 @@ class DataController: ObservableObject {
     let container: ModelContainer
     @Published var currentUser: User
     @Published var isInitialized: Bool = false
-// initialisation du ModelContainer, et création d'un utilisateur par default
-    init(inMemory: Bool = false) {
+
+    // Initialisation du ModelContainer, et création d'un utilisateur par défaut
+    init(inMemory: Bool = true) {
         do {
             let config = ModelConfiguration(isStoredInMemoryOnly: inMemory)
             self.container = try ModelContainer(for: User.self, Account.self, Transaction.self, configurations: config)
@@ -29,7 +26,7 @@ class DataController: ObservableObject {
         }
     }
 
-//  fonction pour récuperer le premier utilisateur de la BDD ou l'utilisateur guest par defaut
+    // Fonction pour récupérer le premier utilisateur de la BDD ou l'utilisateur guest par défaut
     func fetchCurrentUser() -> User {
         let context = container.mainContext
         do {
@@ -43,7 +40,7 @@ class DataController: ObservableObject {
         return User(name: "Guest", birthDate: Date())
     }
 
-//    fonction pour créer un nouvel utilisateur, il n'est pas defini comme le currentUser
+    // Fonction pour créer un nouvel utilisateur, il n'est pas défini comme le currentUser
     func createNewUser(name: String, birthDate: Date) {
         let newUser = User(name: name, birthDate: birthDate)
         container.mainContext.insert(newUser)
@@ -54,13 +51,13 @@ class DataController: ObservableObject {
             print("Failed to create new user: \(error)")
         }
     }
-// fonction pour changer le currentUser
-    
+
+    // Fonction pour changer le currentUser
     func setCurrentUser(user: User) {
         currentUser = user
     }
 
-//    fonction pour initialiser un jeu de donnée dans la BDD si elle est vide
+    // Fonction pour initialiser un jeu de données dans la BDD si elle est vide
     func initializeSampleData() {
         let context = container.mainContext
         do {
@@ -107,8 +104,8 @@ class DataController: ObservableObject {
             print("Erreur lors de la création des données d'exemple : \(error)")
         }
     }
-    
-// fonction pour créer un jeu de donné pour les preview
+
+    // Fonction pour créer un jeu de données pour les previews
     static let previewContainer: ModelContainer = {
         do {
             let config = ModelConfiguration(isStoredInMemoryOnly: true)
@@ -149,8 +146,8 @@ class DataController: ObservableObject {
             fatalError("Failed to create model container for previewing: \(error.localizedDescription)")
         }
     }()
-    
-//    fonction pour vider la BDD
+
+    // Fonction pour vider la BDD
     func resetDatabase() {
         let context = container.mainContext
         do {
@@ -176,5 +173,3 @@ class DataController: ObservableObject {
         }
     }
 }
-
-

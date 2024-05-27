@@ -10,15 +10,22 @@ import SwiftData
 
 struct ProfilScreen: View {
     @Environment(\.modelContext) private var modelContext
-    @Query var users: [User]
-    
+    @EnvironmentObject private var dataController: DataController
+
+    private var currentUser: User {
+        dataController.currentUser
+    }
+
     var body: some View {
         NavigationView {
             VStack(alignment: .center) {
-                if let currentUser = users.first {
-                    Text("Bonjour \(currentUser.name)")
-                } else {
-                    Text("Aucun Profil")
+                Text("Bonjour \(currentUser.name)")
+                Text("Votre solde Total est de \(currentUser.totalAccountAmount(), specifier: "%.2f")")
+                Button(action: {
+                    dataController.resetDatabase()
+                    dataController.initializeSampleData()
+                }) {
+                    Text("Creer data")
                 }
             }
             .navigationTitle("Profil")
@@ -28,5 +35,7 @@ struct ProfilScreen: View {
 
 #Preview {
     ProfilScreen()
-        .modelContainer(for: User.self, inMemory: true)
+        .environment(\.modelContext, DataController.previewContainer.mainContext)
+        .environmentObject(DataController())
 }
+

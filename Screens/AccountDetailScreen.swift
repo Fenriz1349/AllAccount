@@ -45,6 +45,9 @@ struct AccountDetailScreen: View {
             
             Text("Total: \(accountCopy.totalTransactionsAmount(), specifier: "%.2f")")
                 .foregroundColor(.blue)
+            List(accountCopy.transactions ?? []) {transaction in
+                TransactionRow(transaction: transaction)
+            }
             HStack{
                 Button(action: {
                     accountCopy.isActive.toggle()
