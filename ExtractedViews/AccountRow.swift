@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct AccountRow: View {
-    @Binding var account : Account
+    var account : Account
     var body: some View {
         NavigationLink {
             AccountDetailScreen(account:account)
@@ -30,5 +30,5 @@ struct AccountRow: View {
     let modelContainer = DataController.previewContainer
     let firstAccount = try! modelContainer.mainContext.fetch(FetchDescriptor<Account>()).first!
         
-    return  AccountRow(account: .constant(firstAccount))
+    return  AccountRow(account: firstAccount)
 }

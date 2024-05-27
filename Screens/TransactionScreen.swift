@@ -10,7 +10,7 @@ import SwiftData
 
 struct TransactionScreen: View {
     @Environment(\.modelContext) private var modelContext
-    @Query (sort: \Transaction.amount, order: .forward)private var transactions: [Transaction]
+    @Query (sort: \Transaction.date, order: .forward)private var transactions: [Transaction]
     @Query (sort: \Account.name, order: .forward) private var accounts: [Account]
     @State private var selectedAccount: Account?
     @State private var showAddTransactionModal = false
@@ -52,18 +52,7 @@ struct TransactionScreen: View {
                 }else {
                     List {
                         ForEach(transactions.filter { $0.isActive }) { transaction in
-                            NavigationLink {
-                                TransactionDetailScreen()
-                            }label : {
-                                VStack(alignment: .leading) {
-                                    Text(transaction.name)
-                                        .font(.headline)
-                                        .foregroundStyle(transaction.isActive ? .green : .red)
-                                    Text(transaction.account.name)
-                                    Text("montant: \(transaction.amount, specifier: "%.2f")")
-                                        .foregroundColor(.blue)
-                                }
-                            }
+                            TransactionRow(transaction: transaction)
                         }
                     }
                     ExtButtonAdd(text : "Ajouter",showModale: $showAddTransactionModal)

@@ -32,18 +32,7 @@ struct AccountScreen: View {
                        }else {
                            List {
                                ForEach(accounts.filter { $0.isActive }) { account in
-                                   NavigationLink {
-                                       AccountDetailScreen(account:account)
-                                   }label : {
-                                       VStack(alignment: .leading) {
-                                           Text(account.name)
-                                               .font(.headline)
-                                               .foregroundStyle(account.isActive ? .green : .red)
-                                           Text(account.user.name)
-                                           Text("Total: \(account.totalTransactionsAmount(), specifier: "%.2f")")
-                                               .foregroundColor(.blue)
-                                       }
-                                   }
+                                   AccountRow(account: account)
                                }
                                .onDelete(perform: desactivateAccounts)
                            }

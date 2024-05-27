@@ -59,8 +59,8 @@ struct AddTransactionScreen: View {
     
     private func addTransaction() {
         if let selectedAccount = selectedAccount {
-            if let newAmount = Double(amount) {
-                let newTransaction = Transaction(name: name, amount: newAmount, account: selectedAccount)
+            if let newAmount = stringToDouble(amount) {
+                let newTransaction = Transaction(name: name, amount: newAmount, account: selectedAccount, date : date)
                 modelContext.insert(newTransaction)
                 dismiss()
             } else {

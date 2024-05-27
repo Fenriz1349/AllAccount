@@ -67,12 +67,14 @@ class Transaction: Identifiable {
     var amount: Double
     var isActive: Bool
     @Relationship var account: Account
+    var date : Date
 
-    init(name: String, amount: Double, account: Account, isActive: Bool = true) {
+    init(name: String, amount: Double, account: Account, isActive: Bool = true,date : Date) {
         self.name = name
         self.amount = amount
         self.isActive = isActive
         self.account = account
+        self.date = date
     }
 
     func deactivate() {

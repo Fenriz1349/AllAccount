@@ -9,12 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
     @State private var selectedTab = 2
-    @StateObject private var dataController = DataController()
-    
     var body: some View {
-        TabView (selection: $selectedTab){
+        TabView(selection: $selectedTab) {
             TransactionScreen()
                 .tabItem {
                     Label("Transactions", systemImage: "eurosign")
@@ -31,21 +28,10 @@ struct ContentView: View {
                 }
                 .tag(2)
         }
-        .environment(\.modelContext, dataController.container.mainContext)
-        .modelContainer(for: [User.self, Account.self, Transaction.self], inMemory: false)
-        .onAppear {
-            print("test")
-            if !dataController.isInitialized {
-                dataController.initializeSampleData()
-            }
-        }
-
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: [User.self, Account.self, Transaction.self], inMemory: false)
+        .environment(\.modelContext, DataController.previewContainer.mainContext)
 }
-
-
