@@ -34,7 +34,6 @@ class User : Identifiable {
 
 enum AccountType : String,CaseIterable,Codable {
 
-    
     case bank = "Banque"
     case action = "Action"
     case cryptoAccount = "Cryptomonnaie"
@@ -85,6 +84,28 @@ class Account: Identifiable {
     }
 }
 
+enum TransactionCategory : String,CaseIterable,Codable {
+    case salary = "Salaires"
+    case sales = "Ventes"
+    case rent = "Loyer"
+    case invest = "Investissement"
+    case dividends = "Dividendes"
+    case food = "Courses"
+    case resto = "Resto"
+    case bar = "Bar"
+    case subscription = "Abonnement"
+    case leasure = "Loisir"
+    case energy = "Energie"
+    case car = "Voiture"
+    case other = "Autre"
+    
+    func isGain () -> Bool {
+        switch self {
+        case .salary,.dividends,.sales : return true
+        default : return false
+        }
+    }
+}
 //modele d'une transaction
 @Model
 class Transaction: Identifiable {
@@ -93,12 +114,14 @@ class Transaction: Identifiable {
     var amount: Double
     @Relationship var account: Account
     var date : Date
+    var category : TransactionCategory
 
-    init(name: String, amount: Double, account: Account,date : Date) {
+    init(name: String, amount: Double, account: Account,date : Date, category : TransactionCategory) {
         self.name = name
         self.amount = amount
         self.date = date
         self.account = account
+        self.category = category
         account.addTransaction(self)
     }
 }

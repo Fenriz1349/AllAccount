@@ -16,7 +16,7 @@ struct ExtButtonAdd: View {
                 .padding()
                 .background(Color.blue)
                 .foregroundColor(.white)
-                .cornerRadius(8)
+                .cornerRadius(25)
         }
     }
 }

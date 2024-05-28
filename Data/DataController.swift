@@ -73,14 +73,14 @@ class DataController: ObservableObject {
                 context.insert(sampleAccount2)
 
                 let sampleTransactions1 = [
-                    Transaction(name: "Sample Test 1", amount: -10.0, account: sampleAccount1, date: Date()),
-                    Transaction(name: "Sample Test 2", amount: 20.0, account: sampleAccount1, date: Date()),
-                    Transaction(name: "Sample Test 3", amount: 30.0, account: sampleAccount1, date: Date())
+                    Transaction(name: "Sample Test 1", amount: -10.0, account: sampleAccount1, date: Date(),category: .food),
+                    Transaction(name: "Sample Test 2", amount: 20.0, account: sampleAccount1, date: Date(),category: .salary),
+                    Transaction(name: "Sample Test 3", amount: 30.0, account: sampleAccount1, date: Date(),category: .sales)
                 ]
 
                 let sampleTransactions2 = [
-                    Transaction(name: "Sample Test 4", amount: -40.0, account: sampleAccount2, date: Date()),
-                    Transaction(name: "Sample Test 5", amount: 50.0, account: sampleAccount2, date: Date())
+                    Transaction(name: "Sample Test 4", amount: -40.0, account: sampleAccount2, date: Date(),category: .rent),
+                    Transaction(name: "Sample Test 5", amount: 50.0, account: sampleAccount2, date: Date(),category: .salary)
                 ]
 
                 for transaction in sampleTransactions1 {
@@ -121,14 +121,14 @@ class DataController: ObservableObject {
             container.mainContext.insert(previewAccount2)
 
             let previewTransactions1 = [
-                Transaction(name: "Preview Test 1", amount: -10.0, account: previewAccount1, date: Date()),
-                Transaction(name: "Preview Test 2", amount: 20.0, account: previewAccount1, date: Date()),
-                Transaction(name: "Preview Test 3", amount: 30.0, account: previewAccount1, date: Date())
+                Transaction(name: "Preview Test 1", amount: -10.0, account: previewAccount1, date: Date(),category: .food),
+                Transaction(name: "Preview Test 2", amount: 20.0, account: previewAccount1, date: Date(),category: .salary),
+                Transaction(name: "Preview Test 3", amount: 30.0, account: previewAccount1, date: Date(),category: .sales)
             ]
 
             let previewTransactions2 = [
-                Transaction(name: "Preview Test 4", amount: -40.0, account: previewAccount2, date: Date()),
-                Transaction(name: "Preview Test 5", amount: 50.0, account: previewAccount2, date: Date())
+                Transaction(name: "Preview Test 4", amount: -40.0, account: previewAccount2, date: Date(),category: .rent),
+                Transaction(name: "Preview Test 5", amount: 50.0, account: previewAccount2, date: Date(),category: .salary)
             ]
 
             for transaction in previewTransactions1 {

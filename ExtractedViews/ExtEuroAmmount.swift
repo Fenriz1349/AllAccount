@@ -17,16 +17,16 @@ struct ExtEuroAmmount: View {
         formatter.groupingSeparator = " "
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
-        if let formattedString = formatter.string(from: NSNumber(value: animatedAmount)) {
-            return formattedString + "€"
-        } else {
-            return String(format: "%.2f€", animatedAmount)
-        }
+        let displayAmount = abs(animatedAmount)  
+               if let formattedString = formatter.string(from: NSNumber(value: displayAmount)) {
+                   return (amount >= 0.0 ? "+" : "") + formattedString + "€"
+               } else {
+                   return String(format: "%.2f€", displayAmount)
+               }
     }
 
     var body: some View {
         Text(formattedAmount)
-            .foregroundStyle(animatedAmount >= 0 ? .green : .red)
             .onAppear {
                 animateAmount()
             }

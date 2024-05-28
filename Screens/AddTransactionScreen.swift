@@ -14,6 +14,7 @@ struct AddTransactionScreen: View {
     @State private var name: String = ""
     @State private var date : Date = Date()
     @State private var amount : String = ""
+    @State private var category : TransactionCategory = .other
     @State private var showAlert = false
     @Query var accounts: [Account]
     @Query var transactions : [Transaction]
@@ -25,7 +26,7 @@ struct AddTransactionScreen: View {
                 Section(header: Text("Détails de la transaction")) {
                     TextField("Nom", text: $name)
                     TextField("Montant", text: $amount)
-                    Picker("Selectionner le Compte", selection: $selectedAccount) {
+                    Picker("Compte :", selection: $selectedAccount) {
                         ForEach(accounts.filter {$0.isActive}) { account in
                             Text(account.name).tag(account as Account?)
                         }
@@ -35,6 +36,13 @@ struct AddTransactionScreen: View {
                         selection: $date,
                         displayedComponents: [.date]
                     )
+                    Picker ("Type :",selection: $category) {
+                        ForEach (TransactionCategory.allCases, id: \.self) {category in
+                            Text(category.rawValue)
+                                .tag(category as TransactionCategory?)
+                                .foregroundStyle(category.isGain() ? .green : .black)
+                        }
+                    }
                 }
             }
             .navigationTitle("Nouvelle transaction")
@@ -60,7 +68,8 @@ struct AddTransactionScreen: View {
     private func addTransaction() {
         if let selectedAccount = selectedAccount {
             if let newAmount = stringToDouble(amount) {
-                let newTransaction = Transaction(name: name, amount: newAmount, account: selectedAccount, date : date)
+                let amountAdjusted = category.isGain() ? newAmount : -newAmount
+                let newTransaction = Transaction(name: name, amount: amountAdjusted, account: selectedAccount, date : date, category: category)
                 modelContext.insert(newTransaction)
                 dismiss()
             } else {

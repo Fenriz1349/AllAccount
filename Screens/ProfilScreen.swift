@@ -11,7 +11,8 @@ import SwiftData
 struct ProfilScreen: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var dataController: DataController
-
+    @State var balance : Double = 0.0
+    
     private var currentUser: User {
         dataController.currentUser
     }
@@ -22,17 +23,14 @@ struct ProfilScreen: View {
                 Text("Bonjour \(currentUser.name)")
                 HStack{
                     Text("Votre solde Total est de ")
-                    ExtEuroAmmount(amount: currentUser.totalAccountAmount())
-                }
-               
-                Button(action: {
-                    dataController.resetDatabase()
-                    dataController.initializeSampleData()
-                }) {
-                    Text("Creer data")
+                    ExtEuroAmmount(amount: balance)
+                        .foregroundStyle(balance >= 0 ? .green : .red)
                 }
             }
             .navigationTitle("Profil")
+        }
+        .onAppear{
+            balance = currentUser.totalAccountAmount()
         }
     }
 }

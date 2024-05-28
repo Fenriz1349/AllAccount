@@ -14,21 +14,22 @@ struct AccountRow: View {
         NavigationLink {
             AccountDetailScreen(account:account)
         }label : {
-            VStack(alignment: .leading) {
-                HStack{
-                    Text(account.name)
-                        .font(.headline)
-                        .foregroundStyle(.blue )
-                    Text (account.accountType.rawValue)
-                        .foregroundStyle(account.accountType.getColor())
+            ZStack {
+                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                    .fill(.gray.opacity(0.1))
+                VStack(alignment: .leading) {
+                    ExtBlueRibbon(text: account.name)
+                    HStack {
+                        Text (account.accountType.rawValue)
+                            .foregroundStyle(account.accountType.getColor())
+                        Spacer()
+                        ExtEuroAmmount(amount:account.totalTransactionsAmount())
+                            .foregroundStyle(account.totalTransactionsAmount() >= 0 ? .green : .red)
+                    }
                 }
-                
-                Text(account.user.name)
-                HStack {
-                    Text("Total:")
-                    ExtEuroAmmount(amount:account.totalTransactionsAmount())
-                }
+                .padding(.horizontal,10)
             }
+            .frame(width : 300,height: 100)
         }
     }
 }
