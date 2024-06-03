@@ -13,7 +13,7 @@ class DataController: ObservableObject {
     let container: ModelContainer
     @Published var currentUser: User
     @Published var isInitialized: Bool = false
-
+    
     // Initialisation du ModelContainer, et création d'un utilisateur par défaut
     init(inMemory: Bool = true) {
         do {
@@ -25,7 +25,7 @@ class DataController: ObservableObject {
             fatalError("Failed to initialize ModelContainer: \(error)")
         }
     }
-
+    
     // Fonction pour récupérer le premier utilisateur de la BDD ou l'utilisateur guest par défaut
     func fetchCurrentUser() -> User {
         let context = container.mainContext
@@ -39,7 +39,7 @@ class DataController: ObservableObject {
         }
         return User(name: "Guest", birthDate: Date())
     }
-
+    
     // Fonction pour créer un nouvel utilisateur, il n'est pas défini comme le currentUser
     func createNewUser(name: String, birthDate: Date) {
         let newUser = User(name: name, birthDate: birthDate)
@@ -51,46 +51,49 @@ class DataController: ObservableObject {
             print("Failed to create new user: \(error)")
         }
     }
-
+    
     // Fonction pour changer le currentUser
     func setCurrentUser(user: User) {
         currentUser = user
     }
-
+    
     // Fonction pour initialiser un jeu de données dans la BDD si elle est vide
     func initializeSampleData() {
         let context = container.mainContext
         do {
             let users: [User] = try context.fetch(FetchDescriptor<User>())
             if users.isEmpty {
-                let sampleUser = User(name: "Sample User", birthDate: Date(), mail: "user@example.com", password: "password")
+                let sampleUser = User(name: "Guts", birthDate: Date(), mail: "user@example.com", password: "password")
                 context.insert(sampleUser)
-
-                let sampleAccount1 = Account(name: "Sample Account 1", user: sampleUser,accountType: .bank)
-                context.insert(sampleAccount1)
-
-                let sampleAccount2 = Account(name: "Sample Account 2", user: sampleUser,accountType: .cash)
-                context.insert(sampleAccount2)
-
-                let sampleTransactions1 = [
-                    Transaction(name: "Sample Test 1", amount: -10.0, account: sampleAccount1, date: Date(),category: .food),
-                    Transaction(name: "Sample Test 2", amount: 20.0, account: sampleAccount1, date: Date(),category: .salary),
-                    Transaction(name: "Sample Test 3", amount: 30.0, account: sampleAccount1, date: Date(),category: .sales)
+                
+                let currentDate = Date()
+                
+                let currentAccount = Account(name: "Compte Courant", user: sampleUser, accountCategory: .bank)
+                context.insert(currentAccount)
+                
+                let investmentAccount = Account(name: "Bourses", user: sampleUser, accountCategory: .action)
+                context.insert(investmentAccount)
+                
+                let cashAccount = Account(name: "Cash", user: sampleUser, accountCategory: .cash)
+                context.insert(cashAccount)
+                
+                let sampleTransactions = [
+                    Transaction(name: "Solde Initial", amount: 150.0, account: cashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initial ),
+                    Transaction(name: "Salaire", amount: 3000.0, account: currentAccount, date: currentDate.addingTimeInterval(-20 * 86400), category: .salary),
+                    Transaction(name: "Loyer", amount: -1200.0, account: currentAccount, date: currentDate.addingTimeInterval(-10 * 86400), category: .rent),
+                    Transaction(name: "Électricité", amount: -100.0, account: currentAccount, date: currentDate.addingTimeInterval(-8 * 86400), category: .energy),
+                    Transaction(name: "Courses", amount: -200.0, account: currentAccount, date: currentDate.addingTimeInterval(-7 * 86400), category: .food),
+                    Transaction(name: "Bar", amount: -50.0, account: currentAccount, date: currentDate.addingTimeInterval(-5 * 86400), category: .bar),
+                    Transaction(name: "Restaurant", amount: -80.0, account: currentAccount, date: currentDate.addingTimeInterval(-3 * 86400), category: .resto),
+                    Transaction(name: "Investissement", amount: -500.0, account: investmentAccount, date: currentDate.addingTimeInterval(-15 * 86400), category: .invest),
+                    Transaction(name: "Dividendes", amount: 20.0, account: investmentAccount, date: currentDate.addingTimeInterval(-2 * 86400), category: .dividends),
+                    Transaction(name: "Achat divers", amount: -50.0, account: cashAccount, date: currentDate.addingTimeInterval(-1 * 86400), category: .other)
                 ]
-
-                let sampleTransactions2 = [
-                    Transaction(name: "Sample Test 4", amount: -40.0, account: sampleAccount2, date: Date(),category: .rent),
-                    Transaction(name: "Sample Test 5", amount: 50.0, account: sampleAccount2, date: Date(),category: .salary)
-                ]
-
-                for transaction in sampleTransactions1 {
+                
+                for transaction in sampleTransactions {
                     context.insert(transaction)
                 }
-
-                for transaction in sampleTransactions2 {
-                    context.insert(transaction)
-                }
-
+                
                 try context.save()
                 currentUser = sampleUser
                 isInitialized = true
@@ -104,49 +107,52 @@ class DataController: ObservableObject {
             print("Erreur lors de la création des données d'exemple : \(error)")
         }
     }
-
+    
     // Fonction pour créer un jeu de données pour les previews
     static let previewContainer: ModelContainer = {
         do {
             let config = ModelConfiguration(isStoredInMemoryOnly: true)
             let container = try ModelContainer(for: User.self, Account.self, Transaction.self, configurations: config)
-
-            let previewUser = User(name: "Preview User 1", birthDate: Date(), mail: "user@example.com", password: "password")
+            
+            let previewUser = User(name: "Guts", birthDate: Date(), mail: "user@example.com", password: "password")
             container.mainContext.insert(previewUser)
+            
+            let currentDate = Date()
 
-            let previewAccount1 = Account(name: "Preview Account 1", user: previewUser,accountType: .bank)
-            container.mainContext.insert(previewAccount1)
+                    let previewCurrentAccount = Account(name: "Compte Courant", user: previewUser, accountCategory: .bank)
+                    container.mainContext.insert(previewCurrentAccount)
 
-            let previewAccount2 = Account(name: "Preview Account 2", user: previewUser,accountType: .cash)
-            container.mainContext.insert(previewAccount2)
+                    let previewInvestmentAccount = Account(name: "Bourses", user: previewUser, accountCategory: .action)
+                    container.mainContext.insert(previewInvestmentAccount)
 
-            let previewTransactions1 = [
-                Transaction(name: "Preview Test 1", amount: -10.0, account: previewAccount1, date: Date(),category: .food),
-                Transaction(name: "Preview Test 2", amount: 20.0, account: previewAccount1, date: Date(),category: .salary),
-                Transaction(name: "Preview Test 3", amount: 30.0, account: previewAccount1, date: Date(),category: .sales)
-            ]
+                    let previewCashAccount = Account(name: "Cash", user: previewUser, accountCategory: .cash)
+                    container.mainContext.insert(previewCashAccount)
 
-            let previewTransactions2 = [
-                Transaction(name: "Preview Test 4", amount: -40.0, account: previewAccount2, date: Date(),category: .rent),
-                Transaction(name: "Preview Test 5", amount: 50.0, account: previewAccount2, date: Date(),category: .salary)
-            ]
+                    let previewTransactions = [
+                        Transaction(name: "Solde Initial", amount: 150.0, account: previewCashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initial ),
+                        Transaction(name: "Salaire", amount: 3000.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-20 * 86400), category: .salary),
+                        Transaction(name: "Loyer", amount: -1200.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-10 * 86400), category: .rent),
+                        Transaction(name: "Électricité", amount: -100.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-8 * 86400), category: .energy),
+                        Transaction(name: "Courses", amount: -200.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-7 * 86400), category: .food),
+                        Transaction(name: "Bar", amount: -50.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-5 * 86400), category: .bar),
+                        Transaction(name: "Restaurant", amount: -80.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-3 * 86400), category: .resto),
+                        Transaction(name: "Investissement", amount: -500.0, account: previewInvestmentAccount, date: currentDate.addingTimeInterval(-15 * 86400), category: .invest),
+                        Transaction(name: "Dividendes", amount: 20.0, account: previewInvestmentAccount, date: currentDate.addingTimeInterval(-2 * 86400), category: .dividends),
+                        Transaction(name: "Achat divers", amount: -50.0, account: previewCashAccount, date: currentDate.addingTimeInterval(-1 * 86400), category: .other)
+                    ]
 
-            for transaction in previewTransactions1 {
-                container.mainContext.insert(transaction)
-            }
-
-            for transaction in previewTransactions2 {
-                container.mainContext.insert(transaction)
-            }
-
+                    for transaction in previewTransactions {
+                        container.mainContext.insert(transaction)
+                    }
+            
             try container.mainContext.save()
-
+            
             return container
         } catch {
             fatalError("Failed to create model container for previewing: \(error.localizedDescription)")
         }
     }()
-
+    
     // Fonction pour vider la BDD
     func resetDatabase() {
         let context = container.mainContext
@@ -155,17 +161,17 @@ class DataController: ObservableObject {
             for user in users {
                 context.delete(user)
             }
-
+            
             let accounts: [Account] = try context.fetch(FetchDescriptor<Account>())
             for account in accounts {
                 context.delete(account)
             }
-
+            
             let transactions: [Transaction] = try context.fetch(FetchDescriptor<Transaction>())
             for transaction in transactions {
                 context.delete(transaction)
             }
-
+            
             try context.save()
             isInitialized = false
             print("Database reset successfully.")

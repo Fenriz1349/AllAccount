@@ -16,12 +16,14 @@ class User : Identifiable {
     var mail : String
     var password : String
     @Relationship var accounts : [Account] = []
+    var avatar : String
     
-    init(name: String, birthDate: Date, mail: String = "", password: String = "") {
+    init(name: String, birthDate: Date, mail: String = "", password: String = "", avatar : String = "guts") {
         self.name = name
         self.birthDate = birthDate
         self.mail = mail
         self.password = password
+        self.avatar = avatar
     }
     func addAccount(_ account: Account) {
         accounts.append(account)
@@ -30,9 +32,15 @@ class User : Identifiable {
     func totalAccountAmount() -> Double {
         return accounts.reduce(0.0) { $0 + $1.totalTransactionsAmount() }
     }
+    
+    func getAllTransactions () -> [Transaction]{
+        var transactions : [Transaction] = []
+        accounts.forEach { $0.transactions.forEach{transactions.append($0)}}
+        return transactions
+    }
 }
 
-enum AccountType : String,CaseIterable,Codable {
+enum AccountCategory : String,CaseIterable,Codable {
 
     case bank = "Banque"
     case action = "Action"
@@ -57,13 +65,13 @@ class Account: Identifiable {
     var isActive: Bool
     @Relationship var user : User
     @Relationship var transactions: [Transaction] = []
-    var accountType : AccountType
-
-    init(name: String, isActive: Bool = true, user: User, accountType : AccountType) {
+    var accountCategory : AccountCategory
+    
+    init(name: String, isActive: Bool = true, user: User, accountCategory : AccountCategory) {
         self.name = name
         self.isActive = isActive
         self.user = user
-        self.accountType = accountType
+        self.accountCategory = accountCategory
         user.addAccount(self)
     }
     func addTransaction(_ transaction: Transaction) {
@@ -74,16 +82,18 @@ class Account: Identifiable {
     func deactivate() {
         self.isActive = false
     }
-
+    
     func activate() {
         self.isActive = true
     }
-
+    
     func totalTransactionsAmount() -> Double {
         return transactions.reduce(0.0) { $0 + $1.amount }
     }
+    func totalTransactionsCategory(_ category : TransactionCategory) -> Double {
+        return transactions.filter{$0.category == category}.reduce(0.0) { $0 + $1.amount }
+    }
 }
-
 enum TransactionCategory : String,CaseIterable,Codable {
     case salary = "Salaires"
     case sales = "Ventes"
@@ -98,13 +108,30 @@ enum TransactionCategory : String,CaseIterable,Codable {
     case energy = "Energie"
     case car = "Voiture"
     case other = "Autre"
+    case initial = "Solde Initial"
     
     func isGain () -> Bool {
         switch self {
-        case .salary,.dividends,.sales : return true
+        case .salary,.dividends,.sales,.initial : return true
         default : return false
         }
     }
+    func getColor() -> Color {
+            switch self {
+            case .salary, .dividends,.initial:
+                return .green
+            case .sales, .invest:
+                return .blue
+            case .rent, .subscription, .energy:
+                return .red
+            case .food, .resto, .bar:
+                return .orange
+            case .leasure, .car:
+                return .purple
+            case .other:
+                return .gray
+            }
+        }
 }
 //modele d'une transaction
 @Model
@@ -124,4 +151,11 @@ class Transaction: Identifiable {
         self.category = category
         account.addTransaction(self)
     }
+}
+
+struct PieDatas : Identifiable {
+    let id = UUID()
+    let name : String
+    let amount : Double
+    let color : Color
 }

@@ -12,54 +12,105 @@ struct AccountDetailScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     var account: Account
-
+    var positiveTransactions: [Transaction] {
+            account.transactions.filter { $0.category.isGain() }
+        }
+        
+    var negativeTransactions: [Transaction] {
+            account.transactions.filter { !$0.category.isGain() }
+    }
     @State private var newName: String
     @State private var newIsActive: Bool
     @State private var showValidateAlert = false
     @State private var isEditing = false
+    @State private var newCategory : AccountCategory
+    @State private var maxHeight: CGFloat = 0
 
     init(account: Account) {
         self.account = account
         _newName = State(initialValue: account.name)
         _newIsActive = State(initialValue: account.isActive)
+        _newCategory = State(initialValue: account.accountCategory)
     }
-
+    
     var body: some View {
-        VStack(alignment: .leading) {
-            if isEditing {
-                TextField("Nouveau nom", text: $newName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                Toggle("Statut", isOn: $newIsActive)
-                    .padding()
-            } else {
-                HStack {
-                    Text(account.name)
-                        .font(.headline)
-                        .foregroundStyle(account.isActive ? .green : .red)
-                    Text("Statut : \(account.isActive ? "actif" : "inactif")")
+        ScrollView {
+            VStack {
+                if isEditing {
+                    HStack{
+                        TextField("Nouveau nom", text: $newName)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        Toggle("Statut", isOn: $newIsActive)
+                            .padding()
+                    }
+                    Picker ("Type :",selection: $newCategory) {
+                        ForEach (AccountCategory.allCases, id: \.self) {accountCategory in
+                            Text(accountCategory.rawValue).tag(accountCategory as AccountCategory?)
+                        }
+                    }.pickerStyle(.segmented)
+                } else {
+                    HStack {
+                        Text(account.name)
+                            .font(.headline)
+                            .foregroundStyle(account.isActive ? .green : .red)
+                        Text("\(account.isActive ? "Actif" : "Inactif")")
+                    }
+                }
+                HStack{
+                    Text("Total: ")
+                    ExtEuroAmount(amount: account.totalTransactionsAmount())
+                        .foregroundStyle(account.totalTransactionsAmount() >= 0.0 ? .green : .red)
                 }
             }
-            
-            Text("Total: \(account.totalTransactionsAmount(), specifier: "%.2f")")
-                .foregroundColor(.blue)
+            VStack {
+                Text("Balance")
+                    .font(.title)
+                ExtPiePercentAccountCat(transactions: account.transactions)
+                HStack{
+                    VStack {
+                        Text("Entrées")
+                            .font(.title)
+                        HStack{
+                            Text("Total: ")
+                            ExtEuroAmount(amount: positiveTransactions.reduce(0.0) { $0 + $1.amount })
+                                .foregroundStyle(positiveTransactions.reduce(0.0) { $0 + $1.amount } >= 0.0 ? .green : .red)
+                        }
+                        ExtPiePercentAccountCat(transactions: positiveTransactions)
+                            .background(GeometryReader {
+                                Color.clear.preference(key: ViewHeightKey.self, value: $0.frame(in: .local).size.height)
+                            })
+                    }
+                    VStack {
+                        Text("Sortie")
+                            .font(.title)
+                        HStack{
+                            Text("Total: ")
+                            ExtEuroAmount(amount: negativeTransactions.reduce(0.0) { $0 + $1.amount })
+                                .foregroundStyle(negativeTransactions.reduce(0.0) { $0 + $1.amount } >= 0.0 ? .green : .red)
+                        }
+                        ExtPiePercentAccountCat(transactions: negativeTransactions)
+                            .background(GeometryReader {
+                                Color.clear.preference(key: ViewHeightKey.self, value: $0.frame(in: .local).size.height)
+                            })
+                    }
+                }
+            }
             ForEach(account.transactions) { transaction in
                 TransactionAccountRow(transaction: transaction)
             }
-            HStack {
-                if !isEditing {
+        }
+        .toolbar {
+            ToolbarItem(placement : .cancellationAction) {
+                if isEditing {
                     Button(action: {
-                        newIsActive = account.isActive
                         isEditing.toggle()
                     }) {
-                        Text(account.isActive ? "Désactiver" : "Activer")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(account.isActive ? Color.red : Color.green)
-                            .cornerRadius(8)
+                        Text("Annuler")
                     }
                     .padding(.bottom)
                 }
-                
+            }
+            ToolbarItem (placement: .confirmationAction) {
                 Button(action: {
                     if isEditing {
                         showValidateAlert.toggle()
@@ -70,24 +121,6 @@ struct AccountDetailScreen: View {
                     }
                 }) {
                     Text(isEditing ? "Valider" : "Modifier")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(8)
-                }
-                .padding(.bottom)
-
-                if isEditing {
-                    Button(action: {
-                        isEditing.toggle()
-                    }) {
-                        Text("Annuler")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(8)
-                    }
-                    .padding(.bottom)
                 }
             }
         }
@@ -109,7 +142,12 @@ struct AccountDetailScreen: View {
         })
     }
 }
-
+struct ViewHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
 #Preview {
     let modelContainer = DataController.previewContainer
     let firstAccount = try! modelContainer.mainContext.fetch(FetchDescriptor<Account>()).first!

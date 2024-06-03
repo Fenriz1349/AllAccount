@@ -13,12 +13,12 @@ struct ContentView: View {
     @State private var selectedTab = 2
     var body: some View {
         TabView(selection: $selectedTab) {
-            TransactionScreen()
+            TransactionsScreen()
                 .tabItem {
                     Label("Transactions", systemImage: "eurosign")
                 }
                 .tag(0)
-            AccountScreen()
+            AccountsScreen()
                 .tabItem {
                     Label("Comptes", systemImage: "building.columns.fill")
                 }

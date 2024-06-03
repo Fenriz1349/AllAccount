@@ -31,3 +31,24 @@ func DateToStringDayMonth(_ date : Date) -> String {
        dateFormatter.dateFormat = "dd/MM"
        return dateFormatter.string(from: date)
    }
+
+//fonction pour retourner un Double au format Euros avec 2 decimales
+func DoubleToEuro (_ number : Double) -> String {
+    return String(format: "%.2f€", number)
+}
+
+//fonction pour retourner un Double au format pourcentage sans decimale
+func DoubleToPercent (_ number : Double) -> String {
+    return String("\(Int(number))%")
+}
+
+func getPositiveBalance (_ transactions : [Transaction]) -> Double {
+    return transactions.filter{$0.category.isGain()}.reduce(0.0) { $0 + $1.amount }
+}
+func getNegativeBalance (_ transactions : [Transaction]) -> Double {
+    return transactions.filter{!$0.category.isGain()}.reduce(0.0) { $0 + $1.amount }
+}
+
+func stringIfSupTo5 (_ number : Double)-> String {
+    return abs(number) >= 5.0 ? DoubleToPercent(number) : ""
+}

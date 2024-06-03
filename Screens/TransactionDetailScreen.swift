@@ -58,13 +58,13 @@ struct TransactionDetailScreen: View {
                     HStack {
                         Text(transaction.account.name)
                         Spacer()
-                        Text(transaction.account.accountType.rawValue)
+                        Text(transaction.account.accountCategory.rawValue)
                     }
                     
                     HStack {
                         Text("le \(DateToStringDayMonth(transaction.date))")
                         Spacer()
-                        ExtEuroAmmount(amount: transaction.amount)
+                        ExtEuroAmount(amount: transaction.amount)
                     }
                 }
                 HStack {

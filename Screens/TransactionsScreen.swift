@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct TransactionScreen: View {
+struct TransactionsScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Transaction.date, order: .forward) private var transactions: [Transaction]
     @Query(sort: \Account.name, order: .forward) private var accounts: [Account]
@@ -71,7 +71,7 @@ struct TransactionScreen: View {
 }
 
 #Preview {
-    TransactionScreen()
+    TransactionsScreen()
         .modelContainer(for: Account.self, inMemory: true)
         .modelContainer(for: Transaction.self, inMemory: true)
 }

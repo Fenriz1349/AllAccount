@@ -18,14 +18,15 @@ struct ProfilScreen: View {
     }
 
     var body: some View {
-        NavigationView {
+        ScrollView {
             VStack(alignment: .center) {
-                Text("Bonjour \(currentUser.name)")
-                HStack{
-                    Text("Votre solde Total est de ")
-                    ExtEuroAmmount(amount: balance)
-                        .foregroundStyle(balance >= 0 ? .green : .red)
-                }
+                ExtProfilCard(user: currentUser)
+                Text("Balance")
+                    .font(.title)
+                ExtPieBalance(transactions: currentUser.getAllTransactions())
+                Text("Repartition des comptes")
+                    .font(.title)
+                ExtPiePercentAllAccount()
             }
             .navigationTitle("Profil")
         }

@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct AccountScreen: View {
+struct AccountsScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Account.name, order: .forward) private var accounts: [Account]
     @State private var currentAccount : Account?
@@ -56,7 +56,7 @@ struct AccountScreen: View {
 }
 
 #Preview {
-    AccountScreen()
+    AccountsScreen()
         .modelContainer(for: Account.self, inMemory: true)
         .modelContainer(for: Transaction.self, inMemory: true)
     

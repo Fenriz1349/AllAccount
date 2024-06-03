@@ -19,8 +19,11 @@ struct AddAccountScreen: View {
 
     
     @State private var name: String = ""
-    @State private var accountType : AccountType = .bank
+    @State private var accountType : AccountCategory = .bank
     @State private var showAlert = false
+    @State private var initialSold : String = ""
+    @State private var isPositif : Bool = true
+    @State private var creationDate : Date = Date()
     @Query var accounts: [Account]
     @Query var users : [User]
 
@@ -30,21 +33,33 @@ struct AddAccountScreen: View {
                 Section(header: Text("Détails du compte")) {
                     TextField("Nom", text: $name)
                     Picker ("Type :",selection: $accountType) {
-                        ForEach (AccountType.allCases, id: \.self) {accountType in
-                            Text(accountType.rawValue).tag(accountType as AccountType?)
+                        ForEach (AccountCategory.allCases, id: \.self) {accountType in
+                            Text(accountType.rawValue).tag(accountType as AccountCategory?)
                         }
                     }.pickerStyle(.segmented)
+                    HStack {
+                        TextField ("Solde Initial",text: $initialSold)
+                        Toggle(isOn: $isPositif, label: {
+                            Text(isPositif ? "Positif" : "Négatif")
+                        })
+                    }
+                   
+                    DatePicker(
+                        "Date",
+                        selection: $creationDate,
+                        displayedComponents: [.date]
+                    )
                 }
             }
             .navigationTitle("Nouveau Compte")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("Fermer") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
+                    Button("Sauvegarder") {
                         if accounts.contains(where: { $0.name == name }) {
                             showAlert = true
                         } else {
@@ -61,8 +76,12 @@ struct AddAccountScreen: View {
     }
 
     private func addAccount() {
-            let newAccount = Account(name: name, user: currentUser, accountType: accountType)
+            let newAccount = Account(name: name, user: currentUser, accountCategory: accountType)
             modelContext.insert(newAccount)
+        if let initial = stringToDouble(initialSold) {
+            let initialTransaction = Transaction(name: "Solde Initial", amount: isPositif ? initial : -initial, account: newAccount, date: creationDate, category: .salary)
+                modelContext.insert(initialTransaction)
+            }
     }
 }
 

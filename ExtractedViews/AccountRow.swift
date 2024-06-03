@@ -20,10 +20,10 @@ struct AccountRow: View {
                 VStack(alignment: .leading) {
                     ExtBlueRibbon(text: account.name)
                     HStack {
-                        Text (account.accountType.rawValue)
-                            .foregroundStyle(account.accountType.getColor())
+                        Text (account.accountCategory.rawValue)
+                            .foregroundStyle(account.accountCategory.getColor())
                         Spacer()
-                        ExtEuroAmmount(amount:account.totalTransactionsAmount())
+                        ExtEuroAmount(amount:account.totalTransactionsAmount())
                             .foregroundStyle(account.totalTransactionsAmount() >= 0 ? .green : .red)
                     }
                 }

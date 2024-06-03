@@ -15,8 +15,9 @@ struct TransactionRow: View {
             TransactionDetailScreen(transaction: transaction)
         }label : {
             ZStack {
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                RoundedRectangle(cornerRadius: 15.0)
                     .fill(.gray.opacity(0.1))
+                    .overlay(RoundedRectangle(cornerRadius: 15.0).stroke(transaction.category.getColor(), lineWidth: 2))
                 VStack(alignment: .leading) {
                     HStack {
                         Text(transaction.name)
@@ -24,29 +25,32 @@ struct TransactionRow: View {
                         Spacer()
                         Text(transaction.category.rawValue)
                     }
+                    .foregroundStyle(transaction.category.getColor())
                     HStack{
                         Text(transaction.account.name)
                         Spacer()
-                        Text(transaction.account.accountType.rawValue)
+                        Text(transaction.account.accountCategory.rawValue)
                     }
-                    
+                    .foregroundStyle(transaction.account.accountCategory.getColor())
                     HStack {
-                        Text(transaction.category.rawValue)
+                        Text("le \(DateToStringDayMonth(transaction.date))")
+                        
                         Spacer()
-                        ExtEuroAmmount(amount:transaction.amount)
+                        ExtEuroAmount(amount:transaction.amount)
                             .foregroundStyle(transaction.amount >= 0 ? .green : .black)
                     }
-                }
-                .padding(.horizontal,10)
+                }.padding(5)
             }
-            .frame(width : 300,height: 100)
+            .frame(width : 300)
+            .fixedSize(horizontal: false, vertical: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
         }
     }
 }
-
 #Preview {
     let modelContainer = DataController.previewContainer
     let firstTransaction = try! modelContainer.mainContext.fetch(FetchDescriptor<Transaction>()).first!
     
     return  TransactionRow(transaction: firstTransaction)
 }
+
+

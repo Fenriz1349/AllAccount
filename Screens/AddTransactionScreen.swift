@@ -25,24 +25,32 @@ struct AddTransactionScreen: View {
             Form {
                 Section(header: Text("Détails de la transaction")) {
                     TextField("Nom", text: $name)
-                    TextField("Montant", text: $amount)
+                    HStack{
+                        TextField("Montant", text: $amount)
+                            .foregroundStyle(category.isGain() ? .green : .black)
+                        Text(category.isGain() ? "Entrée" : "Sortie")
+                        
+                    }
+                    
                     Picker("Compte :", selection: $selectedAccount) {
                         ForEach(accounts.filter {$0.isActive}) { account in
                             Text(account.name).tag(account as Account?)
                         }
                     }
+                    .pickerStyle(.segmented)
                     DatePicker(
                         "Date",
                         selection: $date,
                         displayedComponents: [.date]
                     )
                     Picker ("Type :",selection: $category) {
-                        ForEach (TransactionCategory.allCases, id: \.self) {category in
+                        ForEach (TransactionCategory.allCases.filter {$0 != .initial}, id: \.self) {category in
                             Text(category.rawValue)
                                 .tag(category as TransactionCategory?)
                                 .foregroundStyle(category.isGain() ? .green : .black)
                         }
                     }
+                    .pickerStyle(.wheel)
                 }
             }
             .navigationTitle("Nouvelle transaction")

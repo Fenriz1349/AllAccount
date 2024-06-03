@@ -1,5 +1,5 @@
 //
-//  ExtEuroAmmount.swift
+//  ExtEuroAmount.swift
 //  AllAccount
 //
 //  Created by Fen on 27/05/2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ExtEuroAmmount: View {
+struct ExtEuroAmount: View {
     var amount: Double
     @State private var animatedAmount: Double = 0.0
 
@@ -19,9 +19,9 @@ struct ExtEuroAmmount: View {
         formatter.maximumFractionDigits = 2
         let displayAmount = abs(animatedAmount)  
                if let formattedString = formatter.string(from: NSNumber(value: displayAmount)) {
-                   return (amount >= 0.0 ? "+" : "") + formattedString + "€"
+                   return (amount >= 0.0 ? "+" : "-") + formattedString + "€"
                } else {
-                   return String(format: "%.2f€", displayAmount)
+                   return DoubleToEuro(displayAmount)
                }
     }
 
@@ -48,6 +48,6 @@ struct ExtEuroAmmount: View {
 }
 
 #Preview {
-    ExtEuroAmmount(amount: 1000)
+    ExtEuroAmount(amount: 1000)
 }
 
