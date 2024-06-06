@@ -18,8 +18,7 @@ struct ExtPiePercentAllAccount: View {
     }
     
     var pieDatas: [PieDatas] {
-            accounts.map { PieDatas(name: $0.name, amount: $0.totalTransactionsAmount(), color: $0.accountCategory.getColor()) }
-                   .sorted(by: { abs($0.amount) > abs($1.amount) })
+        SortedByPosThenNeg(accounts.map { PieDatas(name: $0.name, amount: $0.totalTransactionsAmount, color: $0.accountCategory.getColor()) })
         }
     private var balance: Double {
         currentUser.totalAccountAmount()

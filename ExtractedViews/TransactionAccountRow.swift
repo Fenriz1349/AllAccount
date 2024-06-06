@@ -18,22 +18,27 @@ struct TransactionAccountRow: View {
                 RoundedRectangle(cornerRadius: 15.0)
                     .fill(.gray.opacity(0.1))
                     .overlay(RoundedRectangle(cornerRadius: 15.0).stroke(transaction.category.getColor(), lineWidth: 2))
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text(transaction.name)
-                            .font(.headline)
-                        Spacer()
-                        Text(transaction.category.rawValue)
-                            .foregroundStyle(transaction.category.getColor())
-                    }
-                    HStack {
-                        Text("le \(DateToStringDayMonth(transaction.date))")
-                        
-                        Spacer()
-                        ExtEuroAmount(amount:transaction.amount)
-                            .foregroundStyle(transaction.amount >= 0 ? .green : .black)
-                    }
-                }.padding(5)
+                HStack{
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(transaction.name)
+                                .font(.headline)
+                            Spacer()
+                            Text(transaction.category.rawValue)
+                                .foregroundStyle(transaction.category.getColor())
+                        }
+                        HStack {
+                            Text("le \(DateToStringDayMonth(transaction.date))")
+                            
+                            Spacer()
+                            ExtEuroAmount(amount:transaction.amount)
+                                .foregroundStyle(transaction.amount >= 0 ? .green : .black)
+                        }
+                    }.padding(5)
+                    Image(systemName: "chevron.right")
+                            .fontWeight(.black)
+                            .padding(.horizontal,5)
+                }
             }
             .frame(width : 300)
             .fixedSize(horizontal: false, vertical: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)

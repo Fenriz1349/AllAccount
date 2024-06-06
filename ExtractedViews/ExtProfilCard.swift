@@ -17,6 +17,7 @@ struct ExtProfilCard: View {
         ZStack{
             RoundedRectangle(cornerRadius: 25)
                 .fill(.blue.opacity(50))
+                .overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.black, lineWidth: 4))
             HStack{
                 Image(user.avatar)
                     .resizable()
@@ -26,20 +27,22 @@ struct ExtProfilCard: View {
                     .overlay(Circle().stroke(Color.white, lineWidth: 2))
                     .shadow(radius: 5)
                     .padding(.leading,10)
-                VStack {
+                Spacer()
+                VStack(alignment: .leading) {
                     Text(user.name)
                         .fontWeight(.bold)
                         .font(.system(size: 30))
-                        .padding(.bottom,50)
+                        .padding(.bottom,10)
                     ExtEuroAmount(amount: balance)
                         .fontWeight(.heavy)
                         .font(.system(size: 30))
                         .foregroundStyle(balance >= 0 ? .green : .red)
                 }
+                .padding()
             }
             .foregroundStyle(Color.white)
         }
-        .frame(width: 300,height: 150)
+        .frame(width: 320,height: 125)
     }
 }
 

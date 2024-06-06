@@ -78,7 +78,7 @@ class DataController: ObservableObject {
                 context.insert(cashAccount)
                 
                 let sampleTransactions = [
-                    Transaction(name: "Solde Initial", amount: 150.0, account: cashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initial ),
+                    Transaction(name: "Solde Initial", amount: 150.0, account: cashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initialPositif ),
                     Transaction(name: "Salaire", amount: 3000.0, account: currentAccount, date: currentDate.addingTimeInterval(-20 * 86400), category: .salary),
                     Transaction(name: "Loyer", amount: -1200.0, account: currentAccount, date: currentDate.addingTimeInterval(-10 * 86400), category: .rent),
                     Transaction(name: "Électricité", amount: -100.0, account: currentAccount, date: currentDate.addingTimeInterval(-8 * 86400), category: .energy),
@@ -129,7 +129,7 @@ class DataController: ObservableObject {
                     container.mainContext.insert(previewCashAccount)
 
                     let previewTransactions = [
-                        Transaction(name: "Solde Initial", amount: 150.0, account: previewCashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initial ),
+                        Transaction(name: "Solde Initial", amount: 150.0, account: previewCashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initialPositif ),
                         Transaction(name: "Salaire", amount: 3000.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-20 * 86400), category: .salary),
                         Transaction(name: "Loyer", amount: -1200.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-10 * 86400), category: .rent),
                         Transaction(name: "Électricité", amount: -100.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-8 * 86400), category: .energy),

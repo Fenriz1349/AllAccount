@@ -30,11 +30,6 @@ struct TransactionDetailScreen: View {
         _newAccount = State(initialValue: transaction.account)
     }
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                .fill(.gray.opacity(0.5))
-                .frame(height: 250)
-            
             VStack(alignment: .center) {
                 if isEditing {
                     TextField("Nouveau nom", text: $newName)
@@ -49,16 +44,18 @@ struct TransactionDetailScreen: View {
                     TextField("Nouveau montant", value: $newAmount, format: .number)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 } else {
-                    HStack{
+                    HStack {
                         Text(transaction.name)
                             .font(.headline)
                         Spacer()
                         Text(transaction.category.rawValue)
+                            .foregroundStyle(transaction.category.getColor())
                     }
                     HStack {
                         Text(transaction.account.name)
                         Spacer()
                         Text(transaction.account.accountCategory.rawValue)
+                            .foregroundStyle(transaction.account.accountCategory.getColor())
                     }
                     
                     HStack {
@@ -69,9 +66,13 @@ struct TransactionDetailScreen: View {
                 }
                 HStack {
                     Button(action: {
-                        showEraseAlert.toggle()
+                        if isEditing {
+                            isEditing.toggle()
+                        }else {
+                            showEraseAlert.toggle()
+                        }
                     }) {
-                        Text("Supprimer")
+                        Text(isEditing ? "Annuler" :"Supprimer")
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.red)
@@ -93,28 +94,17 @@ struct TransactionDetailScreen: View {
                             .cornerRadius(8)
                     }
                     .padding(.bottom)
-                    
-                    if isEditing {
-                        Button(action: {
-                            isEditing.toggle()
-                        }) {
-                            Text("Annuler")
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.red)
-                                .cornerRadius(8)
-                        }
-                        .padding(.bottom)
-                    }
                 }
             }
-            .padding()
+            .padding(.horizontal,20)
             .alert("Confirmer la suppression", isPresented: $showEraseAlert, actions: {
                 Button("Annuler", role: .cancel) {}
                 Button("Supprimer", role: .destructive) {
+                    transaction.delete()
                     modelContext.delete(transaction)
                     do {
                         try modelContext.save()
+                        isEditing.toggle()
                         dismiss()
                     } catch {
                         print("Erreur lors de la suppression : \(error)")
@@ -134,6 +124,7 @@ struct TransactionDetailScreen: View {
                     }
                     do {
                         try modelContext.save()
+                        isEditing.toggle()
                         dismiss()
                     } catch {
                         print("Erreur lors de la sauvegarde : \(error)")
@@ -142,8 +133,6 @@ struct TransactionDetailScreen: View {
             }, message: {
                 Text("Êtes-vous sûr de vouloir valider les modifications ?")
             })
-        }
-        .frame(width: 300)
     }
 }
 

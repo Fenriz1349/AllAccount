@@ -13,7 +13,7 @@ struct AddTransactionScreen: View {
     @Environment(\.modelContext) private var modelContext
     @State private var name: String = ""
     @State private var date : Date = Date()
-    @State private var amount : String = ""
+    @State private var amount : Double = 0.0
     @State private var category : TransactionCategory = .other
     @State private var showAlert = false
     @Query var accounts: [Account]
@@ -26,7 +26,7 @@ struct AddTransactionScreen: View {
                 Section(header: Text("Détails de la transaction")) {
                     TextField("Nom", text: $name)
                     HStack{
-                        TextField("Montant", text: $amount)
+                        TextField("Montant", value: $amount, format: .number)
                             .foregroundStyle(category.isGain() ? .green : .black)
                         Text(category.isGain() ? "Entrée" : "Sortie")
                         
@@ -44,7 +44,7 @@ struct AddTransactionScreen: View {
                         displayedComponents: [.date]
                     )
                     Picker ("Type :",selection: $category) {
-                        ForEach (TransactionCategory.allCases.filter {$0 != .initial}, id: \.self) {category in
+                        ForEach (TransactionCategory.allCases.filter {$0 != .initialPositif && $0 != .initialNegatif}, id: \.self) {category in
                             Text(category.rawValue)
                                 .tag(category as TransactionCategory?)
                                 .foregroundStyle(category.isGain() ? .green : .black)
@@ -68,21 +68,17 @@ struct AddTransactionScreen: View {
                 }
             }
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("Erreur"), message: Text("le montant saisie n'est pas un nombre valide"), dismissButton: .default(Text("OK")))
+                Alert(title: Text("Erreur"), message: Text("Veuillez selectionner un Compte"), dismissButton: .default(Text("OK")))
             }
         }
     }
     
     private func addTransaction() {
         if let selectedAccount = selectedAccount {
-            if let newAmount = stringToDouble(amount) {
-                let amountAdjusted = category.isGain() ? newAmount : -newAmount
+                let amountAdjusted = category.isGain() ? amount : -amount
                 let newTransaction = Transaction(name: name, amount: amountAdjusted, account: selectedAccount, date : date, category: category)
                 modelContext.insert(newTransaction)
                 dismiss()
-            } else {
-                showAlert.toggle()
-            }
         } else {
             showAlert.toggle()
         }

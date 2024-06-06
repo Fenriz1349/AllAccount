@@ -15,7 +15,7 @@ class User : Identifiable {
     var birthDate  : Date
     var mail : String
     var password : String
-    @Relationship var accounts : [Account] = []
+    @Relationship (deleteRule: .cascade) var accounts : [Account] = []
     var avatar : String
     
     init(name: String, birthDate: Date, mail: String = "", password: String = "", avatar : String = "guts") {
@@ -30,7 +30,7 @@ class User : Identifiable {
         account.user = self
     }
     func totalAccountAmount() -> Double {
-        return accounts.reduce(0.0) { $0 + $1.totalTransactionsAmount() }
+        return accounts.reduce(0.0) { $0 + $1.totalTransactionsAmount }
     }
     
     func getAllTransactions () -> [Transaction]{
@@ -49,8 +49,8 @@ enum AccountCategory : String,CaseIterable,Codable {
     
     func getColor () -> Color {
         switch self {
-        case .bank : return .gray
-        case .action : return .yellow
+        case .bank : return .yellow
+        case .action : return .orange
         case .cryptoAccount : return .purple
         case .cash : return .green
         }
@@ -64,9 +64,12 @@ class Account: Identifiable {
     @Attribute(.unique) var name: String
     var isActive: Bool
     @Relationship var user : User
-    @Relationship var transactions: [Transaction] = []
+    @Relationship(deleteRule :.cascade) var transactions: [Transaction] = []
     var accountCategory : AccountCategory
     
+    var totalTransactionsAmount : Double {
+        return transactions.reduce(0.0) { $0 + $1.amount }
+    }
     init(name: String, isActive: Bool = true, user: User, accountCategory : AccountCategory) {
         self.name = name
         self.isActive = isActive
@@ -79,6 +82,12 @@ class Account: Identifiable {
         transaction.account = self
     }
     
+    func removeTransaction(_ transaction: Transaction) {
+           if let index = transactions.firstIndex(where: { $0.id == transaction.id }) {
+               transactions.remove(at: index)
+           }
+       }
+    
     func deactivate() {
         self.isActive = false
     }
@@ -87,9 +96,7 @@ class Account: Identifiable {
         self.isActive = true
     }
     
-    func totalTransactionsAmount() -> Double {
-        return transactions.reduce(0.0) { $0 + $1.amount }
-    }
+    
     func totalTransactionsCategory(_ category : TransactionCategory) -> Double {
         return transactions.filter{$0.category == category}.reduce(0.0) { $0 + $1.amount }
     }
@@ -108,23 +115,24 @@ enum TransactionCategory : String,CaseIterable,Codable {
     case energy = "Energie"
     case car = "Voiture"
     case other = "Autre"
-    case initial = "Solde Initial"
+    case initialPositif = "Solde Initial Positif"
+    case initialNegatif = "Solde Initial Négatif"
     
     func isGain () -> Bool {
         switch self {
-        case .salary,.dividends,.sales,.initial : return true
+        case .salary,.dividends,.sales,.initialPositif : return true
         default : return false
         }
     }
     func getColor() -> Color {
             switch self {
-            case .salary, .dividends,.initial:
+            case .salary, .dividends,.initialPositif:
                 return .green
             case .sales, .invest:
                 return .blue
             case .rent, .subscription, .energy:
                 return .red
-            case .food, .resto, .bar:
+            case .food, .resto, .bar, .initialNegatif:
                 return .orange
             case .leasure, .car:
                 return .purple
@@ -151,6 +159,10 @@ class Transaction: Identifiable {
         self.category = category
         account.addTransaction(self)
     }
+    
+    func delete() {
+            account.removeTransaction(self)
+        }
 }
 
 struct PieDatas : Identifiable {
@@ -159,3 +171,4 @@ struct PieDatas : Identifiable {
     let amount : Double
     let color : Color
 }
+

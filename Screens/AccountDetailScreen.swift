@@ -55,11 +55,14 @@ struct AccountDetailScreen: View {
                             .foregroundStyle(account.isActive ? .green : .red)
                         Text("\(account.isActive ? "Actif" : "Inactif")")
                     }
+                    Text(account.accountCategory.rawValue)
+                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                        .foregroundStyle(account.accountCategory.getColor())
                 }
                 HStack{
                     Text("Total: ")
-                    ExtEuroAmount(amount: account.totalTransactionsAmount())
-                        .foregroundStyle(account.totalTransactionsAmount() >= 0.0 ? .green : .red)
+                    ExtEuroAmount(amount: account.totalTransactionsAmount)
+                        .foregroundStyle(account.totalTransactionsAmount >= 0.0 ? .green : .red)
                 }
             }
             VStack {
@@ -117,6 +120,7 @@ struct AccountDetailScreen: View {
                     } else {
                         newName = account.name
                         newIsActive = account.isActive
+                        newCategory = account.accountCategory
                         isEditing.toggle()
                     }
                 }) {
@@ -130,6 +134,7 @@ struct AccountDetailScreen: View {
             Button("Valider", role: .none) {
                 account.name = newName
                 account.isActive = newIsActive
+                account.accountCategory = newCategory
                 do {
                     try modelContext.save()
                     dismiss()

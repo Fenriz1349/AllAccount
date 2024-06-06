@@ -14,18 +14,15 @@ struct ExtPiePercentAccountCat: View {
     private var total :Double {
         transactions.reduce(0.0) { $0 + abs($1.amount) }
     }
-    private var balance : Double {
-        transactions.reduce(0.0) { $0 + $1.amount }
-    }
 
-        var pieDatas: [PieDatas] {
-            let distinctCategories = Set(transactions.map { $0.category })
-            return distinctCategories.map { category in
-                let categoryTransactions = transactions.filter { $0.category == category }
-                let totalAmount = categoryTransactions.reduce(0.0) { $0 + $1.amount }
-                return PieDatas(name: category.rawValue, amount: totalAmount, color: category.getColor())
-            }
-        }
+    var pieDatas: [PieDatas] {
+        let distinctCategories = Set(transactions.map { $0.category })
+        return SortedByPosThenNeg(distinctCategories.map { category in
+            let categoryTransactions = transactions.filter { $0.category == category }
+            let totalAmount = categoryTransactions.reduce(0.0) { $0 + $1.amount }
+            return PieDatas(name: category.rawValue, amount: totalAmount, color: category.getColor())
+        })
+    }
     var body: some View {
             VStack {
                 Chart {

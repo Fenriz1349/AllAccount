@@ -7,23 +7,6 @@
 
 import Foundation
 import SwiftUI
-// fonction pour renvoer nil sur le format n'est pas bon, et la string en Double si c'est un Int, un Double ou un Double avec une virgule
-func stringToDouble (_ test : String) -> Double? {
-    if let double = Double(test) {
-        return double
-    }else {
-        if let int = Int(test) {
-            return Double(int)
-        }else {
-            let array = test.split(separator: ",")
-            if (array.count == 2) && (Int(array[0]) != nil) && (Int(array[1]) != nil) {
-                return Double(array.joined(separator: "."))
-            }else {
-                return nil
-            }
-        }
-    }
-}
 
 //fonction pour retourner la date au format JJ/MM
 func DateToStringDayMonth(_ date : Date) -> String {
@@ -51,4 +34,12 @@ func getNegativeBalance (_ transactions : [Transaction]) -> Double {
 
 func stringIfSupTo5 (_ number : Double)-> String {
     return abs(number) >= 5.0 ? DoubleToPercent(number) : ""
+}
+//fonction pour trier des données des charts par ordre décroissant les valeurs positives, puis les valeurs negatives
+func SortedByPosThenNeg (_ pieDatas :[PieDatas]) -> [PieDatas] {
+    var positives = pieDatas.filter {$0.amount >= 0.0}
+    var negatives = pieDatas.filter {$0.amount < 0.0}
+    positives.sort{$0.amount >= $1.amount}
+    negatives.sort{abs($0.amount) >= abs($1.amount)}
+    return positives+negatives
 }

@@ -13,10 +13,9 @@ struct AccountsScreen: View {
     @Query(sort: \Account.name, order: .forward) private var accounts: [Account]
     @State private var currentAccount : Account?
     @State private var showAddAccountModal : Bool = false
-
     var body: some View {
         NavigationView {
-                   VStack {
+                   ScrollView {
                        if accounts.isEmpty {
                            VStack {
                                Text("Vous n'avez pas encore de compte")
@@ -30,14 +29,12 @@ struct AccountsScreen: View {
                                    .padding()
                            }
                        }else {
-                           List {
-                               ForEach(accounts.filter { $0.isActive }) { account in
+                           ForEach(accounts.filter { $0.isActive }.sorted{$0.totalTransactionsAmount >= $1.totalTransactionsAmount}){ account in
                                    AccountRow(account: account)
+                                       .padding(.bottom,20)
                                }
-                               .onDelete(perform: desactivateAccounts)
                            }
-                       }
-                       ExtButtonAdd(text : "Créer",showModale: $showAddAccountModal)
+                       ExtButtonAdd(text : "Nouveau Compte",showModale: $showAddAccountModal)
                        .sheet(isPresented: $showAddAccountModal, content: {
                                                    AddAccountScreen()
                                                })
@@ -46,19 +43,11 @@ struct AccountsScreen: View {
                }
            }
 
-    private func desactivateAccounts(at offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                accounts[index].deactivate()
-            }
-        }
-    }
 }
 
 #Preview {
-    AccountsScreen()
-        .modelContainer(for: Account.self, inMemory: true)
-        .modelContainer(for: Transaction.self, inMemory: true)
-    
+    let modelContainer = DataController.previewContainer
+    return AccountsScreen()
+        .environment(\.modelContext, modelContainer.mainContext)
 }
 

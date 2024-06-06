@@ -21,7 +21,7 @@ struct AddAccountScreen: View {
     @State private var name: String = ""
     @State private var accountType : AccountCategory = .bank
     @State private var showAlert = false
-    @State private var initialSold : String = ""
+    @State private var initialSold : Double = 0.0
     @State private var isPositif : Bool = true
     @State private var creationDate : Date = Date()
     @Query var accounts: [Account]
@@ -38,7 +38,7 @@ struct AddAccountScreen: View {
                         }
                     }.pickerStyle(.segmented)
                     HStack {
-                        TextField ("Solde Initial",text: $initialSold)
+                        TextField ("Solde Initial",value: $initialSold, format: .number)
                         Toggle(isOn: $isPositif, label: {
                             Text(isPositif ? "Positif" : "Négatif")
                         })
@@ -78,10 +78,8 @@ struct AddAccountScreen: View {
     private func addAccount() {
             let newAccount = Account(name: name, user: currentUser, accountCategory: accountType)
             modelContext.insert(newAccount)
-        if let initial = stringToDouble(initialSold) {
-            let initialTransaction = Transaction(name: "Solde Initial", amount: isPositif ? initial : -initial, account: newAccount, date: creationDate, category: .salary)
-                modelContext.insert(initialTransaction)
-            }
+        let initialTransaction = Transaction(name: "Solde Initial", amount: isPositif ? initialSold : -initialSold, account: newAccount, date: creationDate, category: isPositif ? .initialPositif : .initialNegatif)
+            modelContext.insert(initialTransaction)
     }
 }
 

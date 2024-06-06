@@ -27,51 +27,56 @@ struct TransactionsScreen: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack {
-                if accounts.isEmpty {
-                    VStack {
-                        Text("Vous n'avez pas encore de Compte")
-                            .font(.title)
-                            .padding()
-                        ExtButtonAdd(text: "Créer", showModale: $showAddAccountModal)
-                            .sheet(isPresented: $showAddAccountModal) {
-                                AddAccountScreen()
-                            }
-                    }
-                } else if transactions.isEmpty {
-                    VStack {
-                        Text("Vous n'avez pas encore de transaction")
-                            .font(.title)
-                            .padding()
+            NavigationView {
+                ScrollView {
+                    if accounts.isEmpty {
+                        VStack {
+                            Text("Vous n'avez pas encore de Compte")
+                                .font(.title)
+                                .padding()
+                            ExtButtonAdd(text: "Créer", showModale: $showAddAccountModal)
+                                .sheet(isPresented: $showAddAccountModal) {
+                                    AddAccountScreen()
+                                }
+                        }
+                    } else if transactions.isEmpty {
+                        VStack {
+                            Text("Vous n'avez pas encore de transaction")
+                                .font(.title)
+                                .padding()
+                            ExtButtonAdd(text: "Ajouter", showModale: $showAddTransactionModal)
+                                .sheet(isPresented: $showAddTransactionModal) {
+                                    AddTransactionScreen()
+                                }
+                        }
+                    } else {
                         ExtButtonAdd(text: "Ajouter", showModale: $showAddTransactionModal)
                             .sheet(isPresented: $showAddTransactionModal) {
                                 AddTransactionScreen()
                             }
-                    }
-                } else {
-                    List {
                         ForEach(sortedDates, id: \.self) { date in
-                            Section(header: ExtBlueRibbon(text:"\(DateToStringDayMonth(date))")) {
+                            Section(header:
+                                        HStack {
+                                Text("\(DateToStringDayMonth(date))")
+                                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                                    .padding(.leading,35)
+                                Spacer()
+                            }) {
                                 ForEach(transactionsByDay[date] ?? []) { transaction in
                                     TransactionRow(transaction: transaction)
                                 }
                             }
+                            .padding(.bottom,15)
                         }
                     }
-                    ExtButtonAdd(text: "Ajouter", showModale: $showAddTransactionModal)
-                        .sheet(isPresented: $showAddTransactionModal) {
-                            AddTransactionScreen()
-                        }
                 }
+                .navigationTitle("Transactions")
             }
-            .navigationTitle("Transactions")
         }
-    }
+}
+#Preview {
+    let modelContainer = DataController.previewContainer
+    return TransactionsScreen()
+        .environment(\.modelContext, modelContainer.mainContext)
 }
 
-#Preview {
-    TransactionsScreen()
-        .modelContainer(for: Account.self, inMemory: true)
-        .modelContainer(for: Transaction.self, inMemory: true)
-}

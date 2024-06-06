@@ -17,19 +17,25 @@ struct AccountRow: View {
             ZStack {
                 RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
                     .fill(.gray.opacity(0.1))
-                VStack(alignment: .leading) {
-                    ExtBlueRibbon(text: account.name)
-                    HStack {
-                        Text (account.accountCategory.rawValue)
-                            .foregroundStyle(account.accountCategory.getColor())
-                        Spacer()
-                        ExtEuroAmount(amount:account.totalTransactionsAmount())
-                            .foregroundStyle(account.totalTransactionsAmount() >= 0 ? .green : .red)
+                    .overlay(RoundedRectangle(cornerRadius: 15.0).stroke(account.accountCategory.getColor(), lineWidth: 2))
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(account.name)
+                        HStack {
+                            Text (account.accountCategory.rawValue)
+                                .foregroundStyle(account.accountCategory.getColor())
+                            Spacer()
+                            ExtEuroAmount(amount:account.totalTransactionsAmount)
+                                .foregroundStyle(account.totalTransactionsAmount >= 0 ? .green : .red)
+                        }
                     }
+                    .padding(.horizontal,10)
+                Image(systemName: "chevron.right")
+                        .fontWeight(.black)
+                        .padding(.horizontal,5)
                 }
-                .padding(.horizontal,10)
             }
-            .frame(width : 300,height: 100)
+            .frame(width : 320,height: 100)
         }
     }
 }
