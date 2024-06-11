@@ -32,17 +32,25 @@ struct TransactionDetailScreen: View {
     var body: some View {
             VStack(alignment: .center) {
                 if isEditing {
-                    TextField("Nouveau nom", text: $newName)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    Picker("Nouveau compte", selection: $newAccount) {
-                        ForEach(accounts.filter { $0.isActive }, id: \.self) { account in
-                            Text(account.name).tag(account as Account?)
+                    HStack {
+                        Text("Nouveau nom")
+                        TextField("Nouveau nom", text: $newName)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                    HStack {
+                        Text("Nouveau compte")
+                        Picker("Nouveau compte", selection: $newAccount) {
+                            ForEach(accounts.filter { $0.isActive }, id: \.self) { account in
+                                Text(account.name).tag(account as Account?)
+                            }
                         }
                     }
-                    .pickerStyle(MenuPickerStyle())
                     DatePicker("Nouvelle date", selection: $newDate, displayedComponents: .date)
-                    TextField("Nouveau montant", value: $newAmount, format: .number)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    HStack {
+                        Text("Nouveau montant")
+                        TextField("Nouveau montant", value: $newAmount, format: .number)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
                 } else {
                     HStack {
                         Text(transaction.name)
@@ -90,7 +98,7 @@ struct TransactionDetailScreen: View {
                         Text(isEditing ? "Valider" : "Modifier")
                             .foregroundColor(.white)
                             .padding()
-                            .background(Color.blue)
+                            .background(isEditing ? .green : Color.blue)
                             .cornerRadius(8)
                     }
                     .padding(.bottom)

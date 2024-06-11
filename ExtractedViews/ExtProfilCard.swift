@@ -16,8 +16,8 @@ struct ExtProfilCard: View {
     var body: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 25)
-                .fill(.blue.opacity(50))
-                .overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.black, lineWidth: 4))
+                .fill(.white.opacity(5))
+                .overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.blue, lineWidth: 4))
             HStack{
                 Image(user.avatar)
                     .resizable()
@@ -40,9 +40,8 @@ struct ExtProfilCard: View {
                 }
                 .padding()
             }
-            .foregroundStyle(Color.white)
         }
-        .frame(width: 320,height: 125)
+        .frame(width: 325,height: 125)
     }
 }
 

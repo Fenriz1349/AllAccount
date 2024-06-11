@@ -43,7 +43,7 @@ struct ExtPiePercentAllAccount: View {
                     }
                 }
             }
-            .frame(height: 200)
+            .frame(height: 150)
             .padding()
             
             VStack(alignment: .leading, spacing: 4) {
@@ -57,7 +57,7 @@ struct ExtPiePercentAllAccount: View {
                     
                 }
             }
-            .padding(.top, 8)
+//            .padding(.top, 8)
         }
         .padding()
     }

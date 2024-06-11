@@ -46,7 +46,7 @@ struct ExtPieBalance: View {
             .cornerRadius(25)
             .foregroundStyle(.red)
         }
-        .frame(height: 200)
+        .frame(height: 150)
     }
 }
 

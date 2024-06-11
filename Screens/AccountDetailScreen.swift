@@ -48,27 +48,71 @@ struct AccountDetailScreen: View {
                             Text(accountCategory.rawValue).tag(accountCategory as AccountCategory?)
                         }
                     }.pickerStyle(.segmented)
-                } else {
                     HStack {
-                        Text(account.name)
-                            .font(.headline)
-                            .foregroundStyle(account.isActive ? .green : .red)
-                        Text("\(account.isActive ? "Actif" : "Inactif")")
+                        Button(action: {
+                            isEditing.toggle()
+                        }) {
+                            Text("Annuler")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.red)
+                                .cornerRadius(8)
+                        }
+                        .padding(.bottom)
+                        
+                        Button(action: {
+                            showValidateAlert.toggle()
+                        }) {
+                            Text("Valider")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(.green)
+                                .cornerRadius(8)
+                        }
+                        .padding(.bottom)
                     }
-                    Text(account.accountCategory.rawValue)
-                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                        .foregroundStyle(account.accountCategory.getColor())
-                }
-                HStack{
-                    Text("Total: ")
-                    ExtEuroAmount(amount: account.totalTransactionsAmount)
-                        .foregroundStyle(account.totalTransactionsAmount >= 0.0 ? .green : .red)
+                } else {
+                    VStack {
+                        HStack {
+                            Text(account.name)
+                                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                                .foregroundStyle(account.isActive ? .green : .red)
+                                .font(.system(size: 24))
+                            Text("\(account.isActive ? "Actif" : "Inactif")")
+                        }
+                        HStack {
+                            Text("Type :")
+                            Text(account.accountCategory.rawValue)
+                                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                                .foregroundStyle(account.accountCategory.getColor())
+                        }
+                        HStack{
+                            Text("Total: ")
+                            ExtEuroAmount(amount: account.totalTransactionsAmount)
+                                .foregroundStyle(account.totalTransactionsAmount >= 0.0 ? .green : .red)
+                        }
+                    }
+                    .padding(.bottom,12)
+                    Button(action: {
+                        newName = account.name
+                        newIsActive = account.isActive
+                        newCategory = account.accountCategory
+                        isEditing.toggle()
+                    }) {
+                        Text("Modifier")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                    }
                 }
             }
+            .padding(.bottom,24)
             VStack {
-                Text("Balance")
+                Text("Répartition")
                     .font(.title)
                 ExtPiePercentAccountCat(transactions: account.transactions)
+                    .padding(.top,-25)
                 HStack{
                     VStack {
                         Text("Entrées")
@@ -82,6 +126,7 @@ struct AccountDetailScreen: View {
                             .background(GeometryReader {
                                 Color.clear.preference(key: ViewHeightKey.self, value: $0.frame(in: .local).size.height)
                             })
+                            .padding(.top,-75)
                     }
                     VStack {
                         Text("Sortie")
@@ -95,37 +140,13 @@ struct AccountDetailScreen: View {
                             .background(GeometryReader {
                                 Color.clear.preference(key: ViewHeightKey.self, value: $0.frame(in: .local).size.height)
                             })
+                            .padding(.top,-75)
                     }
                 }
             }
+            .padding(.bottom,24)
             ForEach(account.transactions) { transaction in
                 TransactionAccountRow(transaction: transaction)
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement : .cancellationAction) {
-                if isEditing {
-                    Button(action: {
-                        isEditing.toggle()
-                    }) {
-                        Text("Annuler")
-                    }
-                    .padding(.bottom)
-                }
-            }
-            ToolbarItem (placement: .confirmationAction) {
-                Button(action: {
-                    if isEditing {
-                        showValidateAlert.toggle()
-                    } else {
-                        newName = account.name
-                        newIsActive = account.isActive
-                        newCategory = account.accountCategory
-                        isEditing.toggle()
-                    }
-                }) {
-                    Text(isEditing ? "Valider" : "Modifier")
-                }
             }
         }
         .padding()
@@ -137,7 +158,7 @@ struct AccountDetailScreen: View {
                 account.accountCategory = newCategory
                 do {
                     try modelContext.save()
-                    dismiss()
+                    isEditing.toggle()
                 } catch {
                     print("Erreur lors de la sauvegarde : \(error)")
                 }

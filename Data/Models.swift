@@ -115,24 +115,26 @@ enum TransactionCategory : String,CaseIterable,Codable {
     case energy = "Energie"
     case car = "Voiture"
     case other = "Autre"
+    case input = "Apport"
+    case output = "Retrait"
     case initialPositif = "Solde Initial Positif"
     case initialNegatif = "Solde Initial Négatif"
     
     func isGain () -> Bool {
         switch self {
-        case .salary,.dividends,.sales,.initialPositif : return true
+        case .salary,.dividends,.sales,.initialPositif,.input : return true
         default : return false
         }
     }
     func getColor() -> Color {
             switch self {
-            case .salary, .dividends,.initialPositif:
+            case .salary, .dividends,.initialPositif,.input:
                 return .green
             case .sales, .invest:
                 return .blue
             case .rent, .subscription, .energy:
                 return .red
-            case .food, .resto, .bar, .initialNegatif:
+            case .food, .resto, .bar, .initialNegatif,.output:
                 return .orange
             case .leasure, .car:
                 return .purple
@@ -165,6 +167,7 @@ class Transaction: Identifiable {
         }
 }
 
+//struct pour gérer l'affichage des graphiques
 struct PieDatas : Identifiable {
     let id = UUID()
     let name : String

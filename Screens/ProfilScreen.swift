@@ -24,8 +24,9 @@ struct ProfilScreen: View {
                 Text("Balance")
                     .font(.title)
                 ExtPieBalance(transactions: currentUser.getAllTransactions())
-                Text("Repartition des comptes")
+                Text("Répartition des comptes")
                     .font(.title)
+                    .padding(.bottom,-20)
                 ExtPiePercentAllAccount()
             }
             .navigationTitle("Profil")

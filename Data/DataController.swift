@@ -66,7 +66,7 @@ class DataController: ObservableObject {
                 let sampleUser = User(name: "Guts", birthDate: Date(), mail: "user@example.com", password: "password")
                 context.insert(sampleUser)
                 
-                let currentDate = Date()
+//                let currentDate = Date()
                 
                 let currentAccount = Account(name: "Compte Courant", user: sampleUser, accountCategory: .bank)
                 context.insert(currentAccount)
@@ -77,19 +77,58 @@ class DataController: ObservableObject {
                 let cashAccount = Account(name: "Cash", user: sampleUser, accountCategory: .cash)
                 context.insert(cashAccount)
                 
-                let sampleTransactions = [
-                    Transaction(name: "Solde Initial", amount: 150.0, account: cashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initialPositif ),
-                    Transaction(name: "Salaire", amount: 3000.0, account: currentAccount, date: currentDate.addingTimeInterval(-20 * 86400), category: .salary),
-                    Transaction(name: "Loyer", amount: -1200.0, account: currentAccount, date: currentDate.addingTimeInterval(-10 * 86400), category: .rent),
-                    Transaction(name: "Électricité", amount: -100.0, account: currentAccount, date: currentDate.addingTimeInterval(-8 * 86400), category: .energy),
-                    Transaction(name: "Courses", amount: -200.0, account: currentAccount, date: currentDate.addingTimeInterval(-7 * 86400), category: .food),
-                    Transaction(name: "Bar", amount: -50.0, account: currentAccount, date: currentDate.addingTimeInterval(-5 * 86400), category: .bar),
-                    Transaction(name: "Restaurant", amount: -80.0, account: currentAccount, date: currentDate.addingTimeInterval(-3 * 86400), category: .resto),
-                    Transaction(name: "Investissement", amount: -500.0, account: investmentAccount, date: currentDate.addingTimeInterval(-15 * 86400), category: .invest),
-                    Transaction(name: "Dividendes", amount: 20.0, account: investmentAccount, date: currentDate.addingTimeInterval(-2 * 86400), category: .dividends),
-                    Transaction(name: "Achat divers", amount: -50.0, account: cashAccount, date: currentDate.addingTimeInterval(-1 * 86400), category: .other)
-                ]
+                let sampleTransactions :[Transaction] = [
+                    // Janvier 2024
+                    Transaction(name: "Solde Initial", amount: 500, account: cashAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .initialPositif),
+                    Transaction(name: "Solde Initial", amount: -500, account: investmentAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .initialNegatif),
+                    Transaction(name: "Loyer", amount: -1200.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .rent),
+                    Transaction(name: "Salaire", amount: 3000.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .salary),
+                    Transaction(name: "Courses alimentaires", amount: -200.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 723993600), category: .food),
+                    Transaction(name: "Facture électricité", amount: -100.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 724252800), category: .energy),
+                    Transaction(name: "Achat vêtements", amount: -150.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 724252800), category: .other),
+                    Transaction(name: "Restaurant", amount: -80.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 724252800), category: .resto),
+                    Transaction(name: "Bar", amount: -50.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 724809600), category: .bar),
+                    Transaction(name: "Dividendes", amount: 20.0, account: investmentAccount, date: Date(timeIntervalSinceReferenceDate: 724809600), category: .dividends),
+                    Transaction(name: "Achat divers", amount: -50.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 724809600), category: .other),
+                    Transaction(name: "Achat livres", amount: -40.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725068800), category: .other),
+                    Transaction(name: "Achat jeux vidéo", amount: -60.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725068800), category: .other),
+                    Transaction(name: "Cinéma", amount: -20.0, account: cashAccount, date: Date(timeIntervalSinceReferenceDate: 725068800), category: .leasure),
+                    Transaction(name: "Frais bancaires", amount: -5.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .other),
+                    Transaction(name: "Transport", amount: -30.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .other),
+                    Transaction(name: "Café", amount: -3.0, account: cashAccount, date: Date(timeIntervalSinceReferenceDate: 716076800), category: .other),
+                    Transaction(name: "Abonnement streaming", amount: -15.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .subscription),
+                    Transaction(name: "Achat applications", amount: -10.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .other),
+                    Transaction(name: "Achat musique", amount: -8.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725750400), category: .other),
+                    Transaction(name: "Achat cadeau", amount: -25.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725750400), category: .other),
+                    Transaction(name: "Impôts", amount: -200.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725750400), category: .other),
+
+                    // Février 2024
+                    Transaction(name: "Loyer", amount: -1200.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .rent),
+                    Transaction(name: "Retrait Liquide", amount: -400.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .input),
+                    Transaction(name: "Dépot Liquide", amount: 400.0, account: cashAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .output),
+                    Transaction(name: "Salaire", amount: 3000.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .salary),
+                    Transaction(name: "Action Total", amount: -400.0, account: investmentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .invest),
+                    Transaction(name: "Courses alimentaires", amount: -220.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 725923200), category: .food),
+                    Transaction(name: "Facture électricité", amount: -90.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .energy),
+                    Transaction(name: "Achat meubles", amount: -350.0, account: cashAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .other),
+                    Transaction(name: "Restaurant", amount: -70.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .resto),
+                    Transaction(name: "Bar", amount: -40.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .bar),
+                    Transaction(name: "Dividendes", amount: 15.0, account: investmentAccount, date: Date(timeIntervalSinceReferenceDate: 726691200), category: .dividends),
+                    Transaction(name: "Achat divers", amount: -60.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 726691200), category: .other),
+                    Transaction(name: "Achat livres", amount: -30.0, account: cashAccount, date: Date(timeIntervalSinceReferenceDate: 727075200), category: .other),
+                    Transaction(name: "Achat jeux vidéo", amount: -80.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 718416000), category: .other),
+                    Transaction(name: "Cinéma", amount: -15.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .leasure),
+                    Transaction(name: "Frais bancaires", amount: -5.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .other),
+                    Transaction(name: "Transport", amount: -25.0, account: cashAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .other),
+                    Transaction(name: "Café", amount: -2.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .other),
+                    Transaction(name: "Abonnement streaming", amount: -10.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 728121600), category: .subscription),
+                    Transaction(name: "Achat applications", amount: -12.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 728121600), category: .other),
+                    Transaction(name: "Achat musique", amount: -7.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 728208000), category: .other),
+                    Transaction(name: "Achat cadeau", amount: -20.0, account: currentAccount, date: Date(timeIntervalSinceReferenceDate: 728208000), category: .other)
                 
+            ]
+
+
                 for transaction in sampleTransactions {
                     context.insert(transaction)
                 }
@@ -118,32 +157,70 @@ class DataController: ObservableObject {
             container.mainContext.insert(previewUser)
             
             let currentDate = Date()
+            
+            let previewCurrentAccount = Account(name: "Compte Courant", user: previewUser, accountCategory: .bank)
+            container.mainContext.insert(previewCurrentAccount)
+            
+            let previewInvestmentAccount = Account(name: "Bourses", user: previewUser, accountCategory: .action)
+            container.mainContext.insert(previewInvestmentAccount)
+            
+            let previewCashAccount = Account(name: "Cash", user: previewUser, accountCategory: .cash)
+            container.mainContext.insert(previewCashAccount)
+            
+            let previewTransactions: [Transaction] = [
+                // Janvier 2024
+                Transaction(name: "Solde Initial", amount: 500, account: previewCashAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .initialPositif),
+                Transaction(name: "Solde Initial", amount: -500, account: previewInvestmentAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .initialNegatif),
+                Transaction(name: "Loyer", amount: -1200.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .rent),
+                Transaction(name: "Salaire", amount: 3000.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 723883200), category: .salary),
+                Transaction(name: "Courses alimentaires", amount: -200.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 723993600), category: .food),
+                Transaction(name: "Facture électricité", amount: -100.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 724252800), category: .energy),
+                Transaction(name: "Achat vêtements", amount: -150.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 724252800), category: .other),
+                Transaction(name: "Restaurant", amount: -80.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 724252800), category: .resto),
+                Transaction(name: "Bar", amount: -50.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 724809600), category: .bar),
+                Transaction(name: "Dividendes", amount: 20.0, account: previewInvestmentAccount, date: Date(timeIntervalSinceReferenceDate: 724809600), category: .dividends),
+                Transaction(name: "Achat divers", amount: -50.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 724809600), category: .other),
+                Transaction(name: "Achat livres", amount: -40.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725068800), category: .other),
+                Transaction(name: "Achat jeux vidéo", amount: -60.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725068800), category: .other),
+                Transaction(name: "Cinéma", amount: -20.0, account: previewCashAccount, date: Date(timeIntervalSinceReferenceDate: 725068800), category: .leasure),
+                Transaction(name: "Frais bancaires", amount: -5.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .other),
+                Transaction(name: "Transport", amount: -30.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .other),
+                Transaction(name: "Café", amount: -3.0, account: previewCashAccount, date: Date(timeIntervalSinceReferenceDate: 716076800), category: .other),
+                Transaction(name: "Abonnement streaming", amount: -15.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .subscription),
+                Transaction(name: "Achat applications", amount: -10.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725315200), category: .other),
+                Transaction(name: "Achat musique", amount: -8.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725750400), category: .other),
+                Transaction(name: "Achat cadeau", amount: -25.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725750400), category: .other),
+                Transaction(name: "Impôts", amount: -200.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725750400), category: .other),
 
-                    let previewCurrentAccount = Account(name: "Compte Courant", user: previewUser, accountCategory: .bank)
-                    container.mainContext.insert(previewCurrentAccount)
-
-                    let previewInvestmentAccount = Account(name: "Bourses", user: previewUser, accountCategory: .action)
-                    container.mainContext.insert(previewInvestmentAccount)
-
-                    let previewCashAccount = Account(name: "Cash", user: previewUser, accountCategory: .cash)
-                    container.mainContext.insert(previewCashAccount)
-
-                    let previewTransactions = [
-                        Transaction(name: "Solde Initial", amount: 150.0, account: previewCashAccount, date: currentDate.addingTimeInterval(-20 * 86400), category:.initialPositif ),
-                        Transaction(name: "Salaire", amount: 3000.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-20 * 86400), category: .salary),
-                        Transaction(name: "Loyer", amount: -1200.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-10 * 86400), category: .rent),
-                        Transaction(name: "Électricité", amount: -100.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-8 * 86400), category: .energy),
-                        Transaction(name: "Courses", amount: -200.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-7 * 86400), category: .food),
-                        Transaction(name: "Bar", amount: -50.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-5 * 86400), category: .bar),
-                        Transaction(name: "Restaurant", amount: -80.0, account: previewCurrentAccount, date: currentDate.addingTimeInterval(-3 * 86400), category: .resto),
-                        Transaction(name: "Investissement", amount: -500.0, account: previewInvestmentAccount, date: currentDate.addingTimeInterval(-15 * 86400), category: .invest),
-                        Transaction(name: "Dividendes", amount: 20.0, account: previewInvestmentAccount, date: currentDate.addingTimeInterval(-2 * 86400), category: .dividends),
-                        Transaction(name: "Achat divers", amount: -50.0, account: previewCashAccount, date: currentDate.addingTimeInterval(-1 * 86400), category: .other)
-                    ]
-
-                    for transaction in previewTransactions {
-                        container.mainContext.insert(transaction)
-                    }
+                // Février 2024
+                Transaction(name: "Loyer", amount: -1200.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .rent),
+                Transaction(name: "Retrait Liquide", amount: -400.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .input),
+                Transaction(name: "Dépot Liquide", amount: 400.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .output),
+                Transaction(name: "Salaire", amount: 3000.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .salary),
+                Transaction(name: "Action Total", amount: -400.0, account: previewInvestmentAccount, date: Date(timeIntervalSinceReferenceDate: 725836800), category: .invest),
+                Transaction(name: "Courses alimentaires", amount: -220.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 725923200), category: .food),
+                Transaction(name: "Facture électricité", amount: -90.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .energy),
+                Transaction(name: "Achat meubles", amount: -350.0, account: previewCashAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .other),
+                Transaction(name: "Restaurant", amount: -70.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .resto),
+                Transaction(name: "Bar", amount: -40.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 726307200), category: .bar),
+                Transaction(name: "Dividendes", amount: 15.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 726691200), category: .dividends),
+                Transaction(name: "Achat divers", amount: -60.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 726691200), category: .other),
+                Transaction(name: "Achat livres", amount: -30.0, account: previewCashAccount, date: Date(timeIntervalSinceReferenceDate: 727075200), category: .other),
+                Transaction(name: "Achat jeux vidéo", amount: -80.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 718416000), category: .other),
+                Transaction(name: "Cinéma", amount: -15.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .leasure),
+                Transaction(name: "Frais bancaires", amount: -5.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .other),
+                Transaction(name: "Transport", amount: -25.0, account: previewCashAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .other),
+                Transaction(name: "Café", amount: -2.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 728035200), category: .other),
+                Transaction(name: "Abonnement streaming", amount: -10.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 728121600), category: .subscription),
+                Transaction(name: "Achat applications", amount: -12.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 728121600), category: .other),
+                Transaction(name: "Achat musique", amount: -7.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 728208000), category: .other),
+                Transaction(name: "Achat cadeau", amount: -20.0, account: previewCurrentAccount, date: Date(timeIntervalSinceReferenceDate: 728208000), category: .other)
+            ]
+            
+            
+            for transaction in previewTransactions {
+                container.mainContext.insert(transaction)
+            }
             
             try container.mainContext.save()
             
