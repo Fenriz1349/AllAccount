@@ -17,7 +17,6 @@ struct AddAccountScreen: View {
         dataController.currentUser
     }
 
-    
     @State private var name: String = ""
     @State private var accountType : AccountCategory = .bank
     @State private var showAlert = false
@@ -83,17 +82,21 @@ struct AddAccountScreen: View {
         }
     }
     private func addAccount() {
-            let newAccount = Account(name: name, user: currentUser, accountCategory: accountType)
-            modelContext.insert(newAccount)
-        let initialTransaction = Transaction(name: "Solde Initial", amount: isPositif ? initialSold : -initialSold, account: newAccount, date: creationDate, category: isPositif ? .initialPositif : .initialNegatif)
+        let newAccount = Account(name: name, user: currentUser, accountCategory: accountType)
+        modelContext.insert(newAccount)
+        if let lastAccount = accounts.first {
+            let initialTransaction = Transaction(name: "Solde Initial", amount: isPositif ? initialSold : -initialSold, account: lastAccount, date: creationDate, category: isPositif ? .initialPositif : .initialNegatif)
+            lastAccount.addTransaction(initialTransaction)
             modelContext.insert(initialTransaction)
+        }
+        dismiss()
     }
 }
 
 #Preview {
     AddAccountScreen()
-        .modelContainer(for: Account.self, inMemory: true)
-        .modelContainer(for: User.self, inMemory: true)
+        .environment(\.modelContext, DataController.previewContainer.mainContext)
+        .environmentObject(DataController())
 }
 
 

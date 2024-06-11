@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 //fonction pour retourner la date au format JJ/MM
 func DateToStringDayMonth(_ date : Date) -> String {

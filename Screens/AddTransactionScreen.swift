@@ -85,13 +85,13 @@ struct AddTransactionScreen: View {
     }
     
     private func addTransaction() {
-        if selectedAccount == nil {
-            showAlert.toggle()
-        } else {
+        if let selected = selectedAccount {
             let amountAdjusted = category.isGain() ? amount : -amount
-            let newTransaction = Transaction(name: name, amount: amountAdjusted, account: selectedAccount!, date: date, category: category)
+            let newTransaction = Transaction(name: name, amount: amountAdjusted, account: selected, date: date, category: category)
             modelContext.insert(newTransaction)
             dismiss()
+        }else {
+            showAlert.toggle()
         }
     }
 }

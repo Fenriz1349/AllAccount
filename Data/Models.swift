@@ -63,20 +63,24 @@ class Account: Identifiable {
     
     @Attribute(.unique) var name: String
     var isActive: Bool
-    @Relationship var user : User
-    @Relationship(deleteRule :.cascade) var transactions: [Transaction] = []
-    var accountCategory : AccountCategory
+    @Relationship var user: User
+    @Relationship(deleteRule: .cascade) var transactions: [Transaction] = []
+    var accountCategory: AccountCategory
+    var dateCreated: Date
     
-    var totalTransactionsAmount : Double {
+    var totalTransactionsAmount: Double {
         return transactions.reduce(0.0) { $0 + $1.amount }
     }
-    init(name: String, isActive: Bool = true, user: User, accountCategory : AccountCategory) {
+    
+    init(name: String, isActive: Bool = true, user: User, accountCategory: AccountCategory, dateCreated: Date = Date()) {
         self.name = name
         self.isActive = isActive
         self.user = user
         self.accountCategory = accountCategory
+        self.dateCreated = dateCreated
         user.addAccount(self)
     }
+    
     func addTransaction(_ transaction: Transaction) {
         transactions.append(transaction)
         transaction.account = self
