@@ -13,12 +13,13 @@ struct AddTransactionScreen: View {
     @Environment(\.modelContext) private var modelContext
     @State private var name: String = ""
     @State private var date: Date = Date()
-    @State private var amount: Double = 0.0
+    @State private var amount: Double? = nil
     @State private var category: TransactionCategory = .other
     @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var selectedAccount: Account? = nil
     @Query var accounts: [Account]
     @Query var transactions: [Transaction]
-    @State var selectedAccount: Account? = nil
     
     var body: some View {
         NavigationView {
@@ -39,13 +40,18 @@ struct AddTransactionScreen: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        .frame(height: 50)
+                        .frame(height: 100)
                         Picker("Compte :", selection: $selectedAccount) {
                             ForEach(accounts.filter { $0.isActive }) { account in
                                 Text(account.name).tag(account as Account?)
                             }
                         }
                         .pickerStyle(.segmented)
+                        .onAppear {
+                            if selectedAccount == nil, let firstAccount = accounts.first {
+                                selectedAccount = firstAccount
+                            }
+                        }
                         DatePicker(
                             "Date :",
                             selection: $date,
@@ -75,9 +81,9 @@ struct AddTransactionScreen: View {
                     }
                     Spacer()
                 }
-                .padding(.bottom,275)
+                .padding(.bottom, 250)
                 .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Erreur"), message: Text("Veuillez sélectionner un compte"), dismissButton: .default(Text("OK")))
+                    Alert(title: Text("Erreur"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
                 }
             }
             .navigationTitle("Nouvelle transaction")
@@ -85,19 +91,26 @@ struct AddTransactionScreen: View {
     }
     
     private func addTransaction() {
-        if let selected = selectedAccount {
-            let amountAdjusted = category.isGain() ? amount : -amount
-            let newTransaction = Transaction(name: name, amount: amountAdjusted, account: selected, date: date, category: category)
-            modelContext.insert(newTransaction)
-            dismiss()
-        }else {
-            showAlert.toggle()
+        guard let amount = amount, amount != 0.0 else {
+            alertMessage = "Veuillez entrer un montant valide et différent de zéro"
+            showAlert = true
+            return
         }
+        guard let selected = selectedAccount else {
+            alertMessage = "Veuillez sélectionner un compte"
+            showAlert = true
+            return
+        }
+        let amountAdjusted = category.isGain() ? amount : -amount
+        let newTransaction = Transaction(name: name, amount: amountAdjusted, account: selected, date: date, category: category)
+        modelContext.insert(newTransaction)
+        dismiss()
     }
 }
 
 #Preview {
     AddTransactionScreen()
-        .modelContainer(for: Transaction.self, inMemory: true)
+        .environment(\.modelContext, DataController.previewContainer.mainContext)
+        .environmentObject(DataController())
 }
 
